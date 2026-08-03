@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub 银行 AI Ops 开源项目精选</title>
+<style>
+:root {
+  --primary: #1e3a5f;
+  --primary-light: #2c5282;
+  --accent: #3b82f6;
+  --accent-light: #60a5fa;
+  --slate-50: #f8fafc;
+  --slate-100: #f1f5f9;
+  --slate-200: #e2e8f0;
+  --slate-300: #cbd5e1;
+  --slate-400: #94a3b8;
+  --slate-500: #64748b;
+  --slate-600: #475569;
+  --slate-700: #334155;
+  --slate-800: #1e293b;
+  --slate-900: #0f172a;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --card-bg: #ffffff;
+  --card-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06);
+  --card-shadow-hover: 0 4px 12px rgba(0,0,0,0.08), 0 8px 32px rgba(30,58,95,0.12);
+  --radius: 12px;
+  --radius-lg: 16px;
+  --transition: cubic-bezier(0.4, 0, 0.2, 1);
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: linear-gradient(180deg, var(--slate-50) 0%, var(--slate-100) 100%);
+  color: var(--slate-800);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: white;
+  padding: 64px 0 48px;
+  position: relative;
+  overflow: hidden;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.5;
+}
+
+.header-content {
+  position: relative;
+  z-index: 1;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+
+.header p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  max-width: 640px;
+}
+
+.header-stats {
+  display: flex;
+  gap: 32px;
+  margin-top: 32px;
+}
+
+.header-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.header-stat .num {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.header-stat .label {
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+
+/* Filter bar */
+.filter-bar {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  margin: -24px auto 32px;
+  box-shadow: var(--card-shadow);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  position: relative;
+  z-index: 10;
+}
+
+.filter-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex: 1;
+}
+
+.filter-tab {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--slate-200);
+  background: white;
+  color: var(--slate-600);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s var(--transition);
+  white-space: nowrap;
+  font-family: var(--font-sans);
+}
+
+.filter-tab:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(59, 130, 246, 0.04);
+}
+
+.filter-tab.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.filter-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-input {
+  position: relative;
+}
+
+.search-input input {
+  padding: 8px 14px 8px 38px;
+  border: 1px solid var(--slate-200);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  width: 220px;
+  outline: none;
+  transition: border-color 0.2s var(--transition), box-shadow 0.2s var(--transition);
+  font-family: var(--font-sans);
+  background: var(--slate-50);
+}
+
+.search-input input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background: white;
+}
+
+.search-input svg {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: var(--slate-400);
+}
+
+.sort-select {
+  padding: 8px 14px;
+  border: 1px solid var(--slate-200);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  background: var(--slate-50);
+  color: var(--slate-700);
+  cursor: pointer;
+  outline: none;
+  font-family: var(--font-sans);
+  transition: border-color 0.2s var(--transition);
+}
+
+.sort-select:hover,
+.sort-select:focus {
+  border-color: var(--accent);
+}
+
+/* Project grid */
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 24px;
+  padding-bottom: 64px;
+}
+
+/* Project card */
+.project-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--card-shadow);
+  transition: all 0.3s var(--transition);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--slate-100);
+  cursor: pointer;
+  position: relative;
+}
+
+.project-card:hover {
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-2px);
+  border-color: var(--slate-200);
+}
+
+.card-header {
+  padding: 20px 20px 12px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.card-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--primary-light) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--slate-900);
+  text-decoration: none;
+  transition: color 0.2s var(--transition);
+  word-break: break-all;
+}
+
+.card-title:hover {
+  color: var(--accent);
+}
+
+.card-stars {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--warning);
+  font-weight: 600;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  background: rgba(245, 158, 11, 0.1);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.card-stars svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+
+.card-body {
+  padding: 0 20px 16px;
+  flex: 1;
+}
+
+.card-description {
+  color: var(--slate-600);
+  font-size: 0.88rem;
+  line-height: 1.55;
+  margin-bottom: 14px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.tag-stack {
+  background: rgba(100, 116, 139, 0.1);
+  color: var(--slate-600);
+}
+
+.tag-category {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--accent);
+}
+
+.tag-license {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--success);
+}
+
+.tag-maturity {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--warning);
+}
+
+.tag-support {
+  background: rgba(139, 92, 246, 0.1);
+  color: #8b5cf6;
+}
+
+.tag-support.no {
+  background: rgba(148, 163, 184, 0.15);
+  color: var(--slate-500);
+}
+
+.card-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.feature-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  background: var(--slate-50);
+  border-radius: 6px;
+  font-size: 0.78rem;
+  color: var(--slate-700);
+  border: 1px solid var(--slate-100);
+}
+
+.feature-item::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.card-bank-value {
+  background: linear-gradient(135deg, rgba(30, 58, 95, 0.04) 0%, rgba(59, 130, 246, 0.04) 100%);
+  border-left: 3px solid var(--accent);
+  padding: 10px 12px;
+  border-radius: 0 8px 8px 0;
+  font-size: 0.82rem;
+  color: var(--slate-700);
+  line-height: 1.5;
+}
+
+.card-bank-value strong {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.card-footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--slate-100);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--slate-50);
+}
+
+.maturity-dots {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+}
+
+.maturity-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--slate-200);
+  transition: all 0.2s var(--transition);
+}
+
+.maturity-dot.filled {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--primary-light) 100%);
+  box-shadow: 0 0 4px rgba(59, 130, 246, 0.4);
+}
+
+.maturity-label {
+  font-size: 0.75rem;
+  color: var(--slate-500);
+  margin-left: 8px;
+}
+
+.expand-indicator {
+  font-size: 0.8rem;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: transform 0.3s var(--transition);
+}
+
+.project-card.expanded .expand-indicator {
+  transform: rotate(180deg);
+}
+
+/* Expanded content */
+.card-expanded {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s var(--transition);
+  border-top: 0 solid transparent;
+}
+
+.project-card.expanded .card-expanded {
+  max-height: 800px;
+  border-top: 1px solid var(--slate-100);
+}
+
+.expanded-inner {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.expanded-section h4 {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.expanded-section h4::before {
+  content: '';
+  width: 3px;
+  height: 14px;
+  background: linear-gradient(180deg, var(--accent) 0%, var(--primary-light) 100%);
+  border-radius: 2px;
+}
+
+.expanded-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.expanded-list li {
+  font-size: 0.82rem;
+  color: var(--slate-600);
+  padding-left: 14px;
+  position: relative;
+  line-height: 1.5;
+}
+
+.expanded-list li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-size: 0.75rem;
+}
+
+.expanded-full-value {
+  font-size: 0.84rem;
+  color: var(--slate-700);
+  line-height: 1.6;
+  padding: 10px 12px;
+  background: var(--slate-50);
+  border-radius: 8px;
+  border: 1px solid var(--slate-100);
+}
+
+.deployment-tags,
+.security-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.deploy-tag {
+  padding: 4px 10px;
+  background: rgba(16, 185, 129, 0.08);
+  color: #059669;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.security-tag {
+  padding: 4px 10px;
+  background: rgba(239, 68, 68, 0.08);
+  color: #dc2626;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Loading & error */
+.loading, .error-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--slate-500);
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--slate-200);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  margin: 0 auto 16px;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-state h3 {
+  color: var(--danger);
+  margin-bottom: 8px;
+}
+
+.error-state button {
+  margin-top: 16px;
+  padding: 10px 24px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: background 0.2s var(--transition);
+}
+
+.error-state button:hover {
+  background: var(--primary-light);
+}
+
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--slate-500);
+  background: white;
+  border-radius: var(--radius-lg);
+  border: 1px dashed var(--slate-200);
+}
+
+/* Category color mappings */
+.cat-observability { --cat-color: #3b82f6; }
+.cat-alerting { --cat-color: #f59e0b; }
+.cat-log-analysis { --cat-color: #8b5cf6; }
+.cat-ai-agent { --cat-color: #ec4899; }
+.cat-workflow-orchestration { --cat-color: #10b981; }
+.cat-specialized-tool { --cat-color: #06b6d4; }
+
+/* Top navigation */
+.top-nav {
+  position: absolute;
+  top: 20px;
+  right: 32px;
+  z-index: 10;
+  display: flex;
+  gap: 6px;
+}
+.top-nav a {
+  color: rgba(255,255,255,0.85);
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.2s var(--transition);
+  white-space: nowrap;
+}
+.top-nav a:hover {
+  background: rgba(255,255,255,0.15);
+  color: white;
+}
+.top-nav a.active {
+  background: rgba(255,255,255,0.2);
+  color: white;
+  font-weight: 600;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 32px 20px;
+  color: var(--slate-400);
+  font-size: 0.85rem;
+  border-top: 1px solid var(--slate-100);
+  background: white;
+}
+.footer .footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.footer .footer-links a {
+  color: var(--slate-500);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.2s var(--transition);
+}
+.footer .footer-links a:hover {
+  color: var(--accent);
+}
+.footer .footer-brand {
+  font-weight: 600;
+  color: var(--slate-600);
+  margin-bottom: 4px;
+}
+.footer .footer-meta {
+  font-size: 0.8rem;
+  color: var(--slate-400);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header { padding: 48px 0 36px; }
+  .header h1 { font-size: 1.8rem; }
+  .header p { font-size: 0.95rem; }
+  .header-stats { gap: 20px; margin-top: 24px; }
+  .header-stat .num { font-size: 1.4rem; }
+  .top-nav { top: 12px; right: 12px; gap: 2px; flex-wrap: wrap; }
+  .top-nav a { padding: 6px 10px; font-size: 0.78rem; }
+  .filter-bar { padding: 16px; gap: 12px; }
+  .filter-tabs { width: 100%; }
+  .filter-tab { padding: 6px 12px; font-size: 0.8rem; }
+  .filter-controls { width: 100%; }
+  .search-input input { width: 100%; }
+  .project-grid { grid-template-columns: 1fr; gap: 16px; }
+  .expanded-inner { grid-template-columns: 1fr; gap: 16px; }
+  .card-header { padding: 16px 16px 10px; }
+  .card-body { padding: 0 16px 12px; }
+  .card-footer { padding: 10px 16px; }
+  .maturity-label { display: none; }
+}
+
+@media (max-width: 480px) {
+  .container { padding: 0 16px; }
+  .project-card .card-description { -webkit-line-clamp: 2; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--slate-100); }
+::-webkit-scrollbar-thumb { background: var(--slate-300); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--slate-400); }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <nav class="top-nav">
+    <a href="index.html" class="active">首页</a>
+    <a href="compare.html">项目对比</a>
+    <a href="recommendations.html">选型建议</a>
+    <a href="trends.html">趋势洞察</a>
+  </nav>
+  <div class="container header-content">
+    <h1>GitHub 银行 AI Ops 开源项目精选</h1>
+    <p>精选 14 个业界领先的开源 AIOps 项目，涵盖可观测性、告警管理、日志分析、AI 智能体等核心领域，助力银行构建智能运维体系</p>
+    <div class="header-stats">
+      <div class="header-stat">
+        <span class="num" id="stat-projects">14</span>
+        <span class="label">精选项目</span>
+      </div>
+      <div class="header-stat">
+        <span class="num" id="stat-stars">0</span>
+        <span class="label">累计 Stars</span>
+      </div>
+      <div class="header-stat">
+        <span class="num" id="stat-categories">6</span>
+        <span class="label">功能分类</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="filter-bar">
+    <div class="filter-tabs" id="filterTabs"></div>
+    <div class="filter-controls">
+      <div class="search-input">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="searchInput" placeholder="搜索项目名称、技术栈或关键词...">
+      </div>
+      <select class="sort-select" id="sortSelect">
+        <option value="stars">按 Stars 排序</option>
+        <option value="maturity">按成熟度排序</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="project-grid" id="projectGrid">
+    <div class="loading" id="loadingState">
+      <div class="loading-spinner"></div>
+      <p>正在加载项目数据...</p>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-links">
+      <a href="index.html">首页</a>
+      <a href="compare.html">项目对比</a>
+      <a href="recommendations.html">选型建议</a>
+      <a href="trends.html">趋势洞察</a>
+    </div>
+    <p class="footer-brand">银行 AI Ops 开源项目调研</p>
+    <p class="footer-meta">数据截至 2026年8月 | 本页面仅供参考，请以项目实际信息为准</p>
+  </div>
+</footer>
+
+<script>
+(function() {
+  const CATEGORY_LABELS = {
+    'observability': '可观测性',
+    'alerting': '告警管理',
+    'log-analysis': '日志分析',
+    'ai-agent': 'AI智能体',
+    'workflow-orchestration': '流程编排',
+    'specialized-tool': '专项工具'
+  };
+
+  const CATEGORY_ICONS = {
+    'observability': '📊',
+    'alerting': '🔔',
+    'log-analysis': '📝',
+    'ai-agent': '🤖',
+    'workflow-orchestration': '🔀',
+    'specialized-tool': '🛠️'
+  };
+
+  const DEPLOYMENT_LABELS = {
+    'cloud-native': '云原生',
+    'vm': '虚拟机',
+    'physical': '物理机',
+    'offline': '离线部署'
+  };
+
+  const state = {
+    projects: [],
+    activeCategory: 'all',
+    searchQuery: '',
+    sortBy: 'stars'
+  };
+
+  function init() {
+    setupFilterTabs();
+    setupSearch();
+    setupSort();
+    loadData();
+  }
+
+  function setupFilterTabs() {
+    const tabs = [
+      { key: 'all', label: '全部' },
+      { key: 'observability', label: '可观测性' },
+      { key: 'alerting', label: '告警管理' },
+      { key: 'log-analysis', label: '日志分析' },
+      { key: 'ai-agent', label: 'AI智能体' },
+      { key: 'workflow-orchestration', label: '流程编排' },
+      { key: 'specialized-tool', label: '专项工具' }
+    ];
+
+    const container = document.getElementById('filterTabs');
+    container.innerHTML = tabs.map(t =>
+      `<button class="filter-tab ${t.key === 'all' ? 'active' : ''}" data-category="${t.key}">${t.label}</button>`
+    ).join('');
+
+    container.addEventListener('click', e => {
+      const btn = e.target.closest('.filter-tab');
+      if (!btn) return;
+      container.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      state.activeCategory = btn.dataset.category;
+      render();
+    });
+  }
+
+  function setupSearch() {
+    const input = document.getElementById('searchInput');
+    input.addEventListener('input', e => {
+      state.searchQuery = e.target.value.trim().toLowerCase();
+      render();
+    });
+  }
+
+  function setupSort() {
+    const select = document.getElementById('sortSelect');
+    select.addEventListener('change', e => {
+      state.sortBy = e.target.value;
+      render();
+    });
+  }
+
+  async function loadData() {
+    try {
+      const response = await fetch('data/bank-aiops-projects.json', { cache: 'no-store' });
+      if (!response.ok) throw new Error('网络请求失败: ' + response.status);
+      const data = await response.json();
+      if (!data.projects || !Array.isArray(data.projects)) throw new Error('数据格式错误');
+      state.projects = data.projects;
+      updateStats();
+      render();
+    } catch (err) {
+      showError(err.message);
+    }
+  }
+
+  function updateStats() {
+    const totalStars = state.projects.reduce((sum, p) => sum + (p.stars || 0), 0);
+    document.getElementById('stat-projects').textContent = state.projects.length;
+    document.getElementById('stat-stars').textContent = totalStars.toLocaleString();
+    document.getElementById('stat-categories').textContent = new Set(
+      state.projects.flatMap(p => p.category || [])
+    ).size;
+  }
+
+  function showError(msg) {
+    const grid = document.getElementById('projectGrid');
+    grid.innerHTML = `
+      <div class="error-state" style="grid-column: 1/-1;">
+        <h3>⚠️ 加载数据失败</h3>
+        <p>${msg}</p>
+        <p style="margin-top: 8px; font-size: 0.85rem;">请确保 <code>data/bank-aiops-projects.json</code> 文件存在且格式正确</p>
+        <button onclick="location.reload()">重试</button>
+      </div>
+    `;
+  }
+
+  function getFilteredSorted() {
+    let list = [...state.projects];
+
+    if (state.activeCategory !== 'all') {
+      list = list.filter(p => (p.category || []).includes(state.activeCategory));
+    }
+
+    if (state.searchQuery) {
+      const q = state.searchQuery;
+      list = list.filter(p => {
+        const haystack = [
+          p.name,
+          p.description,
+          p.bankValue,
+          ...(p.stack || []),
+          ...(p.features || []),
+          ...(p.category || []).map(c => CATEGORY_LABELS[c] || c)
+        ].join(' ').toLowerCase();
+        return haystack.includes(q);
+      });
+    }
+
+    list.sort((a, b) => {
+      if (state.sortBy === 'stars') return (b.stars || 0) - (a.stars || 0);
+      return (b.maturity || 0) - (a.maturity || 0);
+    });
+
+    return list;
+  }
+
+  function render() {
+    const list = getFilteredSorted();
+    const grid = document.getElementById('projectGrid');
+
+    if (list.length === 0) {
+      grid.innerHTML = `<div class="no-results">未找到匹配的项目，请尝试其他筛选条件</div>`;
+      return;
+    }
+
+    grid.innerHTML = list.map(p => renderCard(p)).join('');
+
+    grid.querySelectorAll('.project-card').forEach(card => {
+      card.addEventListener('click', e => {
+        if (e.target.closest('a')) return;
+        card.classList.toggle('expanded');
+      });
+    });
+  }
+
+  function renderCard(p) {
+    const initials = p.name.substring(0, 2).toUpperCase();
+    const stackTags = (p.stack || []).map(s => `<span class="tag tag-stack">${s}</span>`).join('');
+    const categoryTags = (p.category || []).map(c =>
+      `<span class="tag tag-category" title="${CATEGORY_LABELS[c] || c}">${CATEGORY_ICONS[c] || '🏷️'} ${CATEGORY_LABELS[c] || c}</span>`
+    ).join('');
+    const topFeatures = (p.features || []).slice(0, 3).map(f => `<span class="feature-item">${f}</span>`).join('');
+    const allFeatures = (p.features || []).map(f => `<li>${f}</li>`).join('');
+    const deployTags = (p.deployment || []).map(d =>
+      `<span class="deploy-tag">${DEPLOYMENT_LABELS[d] || d}</span>`
+    ).join('');
+    const securityTags = (p.security || []).map(s =>
+      `<span class="security-tag">${s}</span>`
+    ).join('');
+    const maturityDots = renderMaturity(p.maturity);
+    const chineseTag = p.chineseSupport
+      ? '<span class="tag tag-support">🇨🇳 中文支持</span>'
+      : '<span class="tag tag-support no">需英文环境</span>';
+    const offlineTag = p.offlineSupport
+      ? '<span class="tag tag-support">📦 离线可用</span>'
+      : '<span class="tag tag-support no">需联网</span>';
+
+    return `
+      <div class="project-card" data-name="${p.name}">
+        <div class="card-header">
+          <div class="card-title-group">
+            <div class="card-icon">${initials}</div>
+            <a href="${p.url}" class="card-title" target="_blank" rel="noopener" onclick="event.stopPropagation()">${p.name}</a>
+          </div>
+          <div class="card-stars" title="${p.stars.toLocaleString()} Stars on GitHub">
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            ${p.stars.toLocaleString()}
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div style="margin-bottom: 10px;">
+            <span class="tag tag-license">📜 ${p.license}</span>
+          </div>
+          <p class="card-description">${p.description}</p>
+
+          <div class="card-tags">
+            ${stackTags}
+          </div>
+
+          <div class="card-tags">
+            ${categoryTags}
+          </div>
+
+          <div class="card-features">
+            ${topFeatures}
+          </div>
+
+          <div class="card-bank-value">
+            <strong>💼 银行应用价值:</strong> ${p.bankValue}
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <div style="display: flex; align-items: center;">
+            <span style="font-size: 0.78rem; color: var(--slate-500); margin-right: 6px;">成熟度</span>
+            <div class="maturity-dots">
+              ${maturityDots}
+            </div>
+            <span class="maturity-label">${p.maturity}/5</span>
+          </div>
+          <div class="expand-indicator">
+            <span>查看详情</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+
+        <div class="card-expanded">
+          <div class="expanded-inner">
+            <div class="expanded-section">
+              <h4>核心特性</h4>
+              <ul class="expanded-list">${allFeatures}</ul>
+            </div>
+            <div class="expanded-section">
+              <h4>部署方式</h4>
+              <div class="deployment-tags" style="margin-bottom: 16px;">${deployTags || '<span style="color: var(--slate-400); font-size: 0.82rem;">未明确</span>'}</div>
+              <h4>安全特性</h4>
+              <div class="security-tags">${securityTags || '<span style="color: var(--slate-400); font-size: 0.82rem;">未明确</span>'}</div>
+            </div>
+            <div class="expanded-section">
+              <h4>银行价值详述</h4>
+              <div class="expanded-full-value">${p.bankValue}</div>
+              <div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap;">
+                ${chineseTag}
+                ${offlineTag}
+              </div>
+            </div>
+            <div class="expanded-section">
+              <h4>项目链接</h4>
+              <a href="${p.url}" target="_blank" rel="noopener" style="color: var(--accent); font-size: 0.88rem; text-decoration: none; word-break: break-all;">${p.url}</a>
+              <p style="margin-top: 8px; font-size: 0.82rem; color: var(--slate-500);">点击链接前往 GitHub 查看完整文档和源代码</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderMaturity(level) {
+    level = Math.max(1, Math.min(5, level || 1));
+    let html = '';
+    for (let i = 0; i < 5; i++) {
+      html += `<div class="maturity-dot ${i < level ? 'filled' : ''}"></div>`;
+    }
+    return html;
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+
+</body>
+</html>

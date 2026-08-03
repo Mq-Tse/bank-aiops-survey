@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>银行 AI Ops 项目对比 | GitHub Bank AIOps</title>
+<style>
+:root {
+  --primary: #1e3a5f;
+  --primary-light: #2c5282;
+  --accent: #3b82f6;
+  --accent-light: #60a5fa;
+  --slate-50: #f8fafc;
+  --slate-100: #f1f5f9;
+  --slate-200: #e2e8f0;
+  --slate-300: #cbd5e1;
+  --slate-400: #94a3b8;
+  --slate-500: #64748b;
+  --slate-600: #475569;
+  --slate-700: #334155;
+  --slate-800: #1e293b;
+  --slate-900: #0f172a;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --card-bg: #ffffff;
+  --card-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06);
+  --card-shadow-hover: 0 4px 12px rgba(0,0,0,0.08), 0 8px 32px rgba(30,58,95,0.12);
+  --radius: 12px;
+  --radius-lg: 16px;
+  --transition: cubic-bezier(0.4, 0, 0.2, 1);
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: linear-gradient(180deg, var(--slate-50) 0%, var(--slate-100) 100%);
+  color: var(--slate-800);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: white;
+  padding: 64px 0 48px;
+  position: relative;
+  overflow: hidden;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.5;
+}
+
+.header-content {
+  position: relative;
+  z-index: 1;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+
+.header p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  max-width: 640px;
+}
+
+.header-nav {
+  position: absolute;
+  top: 24px;
+  right: 32px;
+  z-index: 2;
+  display: flex;
+  gap: 6px;
+}
+
+.header-nav a {
+  color: rgba(255,255,255,0.85);
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.2s var(--transition);
+  white-space: nowrap;
+}
+
+.header-nav a:hover {
+  background: rgba(255,255,255,0.15);
+  color: white;
+}
+
+.header-nav a.active {
+  background: rgba(255,255,255,0.2);
+  color: white;
+  font-weight: 600;
+}
+
+.section {
+  padding: 0 0 48px;
+}
+
+.selector-panel {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin: -24px auto 32px;
+  box-shadow: var(--card-shadow);
+  position: relative;
+  z-index: 10;
+}
+
+.selector-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 6px;
+}
+
+.selector-subtitle {
+  font-size: 0.85rem;
+  color: var(--slate-500);
+  margin-bottom: 16px;
+}
+
+.selector-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.selected-count {
+  font-size: 0.88rem;
+  color: var(--slate-600);
+}
+
+.selected-count strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.selector-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.selector-actions button {
+  padding: 6px 14px;
+  border: 1px solid var(--slate-200);
+  border-radius: 8px;
+  background: white;
+  color: var(--slate-600);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s var(--transition);
+  font-family: var(--font-sans);
+}
+
+.selector-actions button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(59, 130, 246, 0.04);
+}
+
+.selector-actions button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.project-checkboxes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.project-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--slate-200);
+  border-radius: 10px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s var(--transition);
+  user-select: none;
+}
+
+.project-checkbox:hover {
+  border-color: var(--accent);
+  background: rgba(59, 130, 246, 0.03);
+}
+
+.project-checkbox.checked {
+  border-color: var(--accent);
+  background: rgba(59, 130, 246, 0.06);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.12);
+}
+
+.project-checkbox input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.project-checkbox.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.project-checkbox.disabled:hover {
+  border-color: var(--slate-200);
+  background: white;
+}
+
+.pc-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.pc-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--slate-800);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pc-meta {
+  font-size: 0.75rem;
+  color: var(--slate-500);
+  display: flex;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.pc-stars {
+  color: var(--warning);
+  font-weight: 500;
+}
+
+.pc-maturity {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.pc-maturity-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--slate-300);
+}
+
+.pc-maturity-dot.filled {
+  background: var(--accent);
+}
+
+.table-wrapper {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+}
+
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+table.compare-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.88rem;
+  min-width: 900px;
+}
+
+.compare-table thead {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.compare-table th {
+  padding: 14px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.88rem;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s var(--transition);
+  border-right: 1px solid rgba(255,255,255,0.1);
+  position: relative;
+}
+
+.compare-table th:last-child {
+  border-right: none;
+}
+
+.compare-table th:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.compare-table th .sort-icon {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 0.72rem;
+  opacity: 0.6;
+  transition: transform 0.2s var(--transition);
+}
+
+.compare-table th.sort-asc .sort-icon {
+  opacity: 1;
+  transform: rotate(180deg);
+}
+
+.compare-table th.sort-desc .sort-icon {
+  opacity: 1;
+}
+
+.compare-table th.sort-active {
+  background: rgba(255,255,255,0.18);
+}
+
+.compare-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--slate-100);
+  border-right: 1px solid var(--slate-100);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+.compare-table td:last-child {
+  border-right: none;
+}
+
+.compare-table tbody tr {
+  transition: background 0.2s var(--transition);
+}
+
+.compare-table tbody tr:hover {
+  background: var(--slate-50);
+}
+
+.compare-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.maturity-high {
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.maturity-medium {
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.maturity-low {
+  background: rgba(148, 163, 184, 0.08);
+}
+
+.maturity-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.maturity-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.82rem;
+  align-self: flex-start;
+}
+
+.maturity-high .maturity-badge {
+  background: rgba(16, 185, 129, 0.15);
+  color: #059669;
+}
+
+.maturity-medium .maturity-badge {
+  background: rgba(245, 158, 11, 0.15);
+  color: #d97706;
+}
+
+.maturity-low .maturity-badge {
+  background: rgba(148, 163, 184, 0.15);
+  color: var(--slate-500);
+}
+
+.maturity-dots {
+  display: flex;
+  gap: 3px;
+}
+
+.maturity-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--slate-200);
+}
+
+.maturity-dot.filled {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--primary-light) 100%);
+  box-shadow: 0 0 4px rgba(59, 130, 246, 0.4);
+}
+
+.project-name-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 180px;
+}
+
+.project-name-cell .name-link {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--slate-900);
+  text-decoration: none;
+  transition: color 0.2s var(--transition);
+  word-break: break-all;
+}
+
+.project-name-cell .name-link:hover {
+  color: var(--accent);
+}
+
+.project-name-cell .desc {
+  font-size: 0.8rem;
+  color: var(--slate-500);
+  line-height: 1.5;
+}
+
+.bank-value-cell {
+  font-size: 0.85rem;
+  color: var(--slate-700);
+  line-height: 1.6;
+  min-width: 200px;
+}
+
+.bank-value-cell::before {
+  content: '💼';
+  margin-right: 4px;
+}
+
+.feature-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.feature-list .feature {
+  font-size: 0.82rem;
+  color: var(--slate-700);
+  padding: 4px 10px;
+  background: var(--slate-50);
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid var(--slate-100);
+  line-height: 1.4;
+}
+
+.feature-list .feature::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.feature-list .feature.empty {
+  color: var(--slate-400);
+  font-style: italic;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.feature-list .feature.empty::before {
+  display: none;
+}
+
+.observability .feature::before { background: #3b82f6; }
+.alerting .feature::before { background: #f59e0b; }
+.ai-features .feature::before { background: #ec4899; }
+
+.tag-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.tag-group .tag {
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.tag-stack {
+  background: rgba(100, 116, 139, 0.1);
+  color: var(--slate-600);
+}
+
+.tag-license {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--success);
+  font-weight: 600;
+}
+
+.tag-deploy {
+  background: rgba(59, 130, 246, 0.08);
+  color: var(--accent);
+}
+
+.tag-security {
+  background: rgba(239, 68, 68, 0.08);
+  color: #dc2626;
+}
+
+.binary-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.binary-indicator.yes {
+  color: var(--success);
+}
+
+.binary-indicator.no {
+  color: var(--slate-400);
+}
+
+.binary-indicator .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.binary-indicator.yes .dot {
+  background: var(--success);
+  box-shadow: 0 0 4px rgba(16, 185, 129, 0.4);
+}
+
+.binary-indicator.no .dot {
+  background: var(--slate-300);
+}
+
+.stars-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--warning);
+  font-weight: 700;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.stars-cell svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+.primary-lang {
+  font-weight: 600;
+  color: var(--slate-700);
+}
+
+.support-cell {
+  white-space: nowrap;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--slate-500);
+}
+
+.empty-state h3 {
+  color: var(--primary);
+  margin-bottom: 8px;
+  font-size: 1.2rem;
+}
+
+.empty-state p {
+  font-size: 0.9rem;
+}
+
+.loading, .error-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--slate-500);
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--slate-200);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  margin: 0 auto 16px;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-state h3 {
+  color: var(--danger);
+  margin-bottom: 8px;
+}
+
+.error-state button {
+  margin-top: 16px;
+  padding: 10px 24px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: background 0.2s var(--transition);
+}
+
+.error-state button:hover {
+  background: var(--primary-light);
+}
+
+.footer {
+  text-align: center;
+  padding: 32px 20px;
+  color: var(--slate-400);
+  font-size: 0.85rem;
+  border-top: 1px solid var(--slate-100);
+  background: white;
+}
+.footer .footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.footer .footer-links a {
+  color: var(--slate-500);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.2s var(--transition);
+}
+.footer .footer-links a:hover {
+  color: var(--accent);
+}
+.footer .footer-brand {
+  font-weight: 600;
+  color: var(--slate-600);
+  margin-bottom: 4px;
+}
+.footer .footer-meta {
+  font-size: 0.8rem;
+  color: var(--slate-400);
+}
+
+.col-sticky {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  background: inherit;
+}
+
+.compare-table thead .col-sticky {
+  z-index: 6;
+}
+
+.compare-table tbody .col-sticky {
+  box-shadow: 2px 0 4px rgba(0,0,0,0.04);
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--slate-100); }
+::-webkit-scrollbar-thumb { background: var(--slate-300); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--slate-400); }
+
+@media (max-width: 768px) {
+  .header { padding: 48px 0 36px; }
+  .header h1 { font-size: 1.8rem; }
+  .header p { font-size: 0.95rem; }
+  .header-nav { top: 12px; right: 12px; gap: 2px; flex-wrap: wrap; }
+  .header-nav a { padding: 6px 10px; font-size: 0.78rem; }
+  .container { padding: 0 16px; }
+  .selector-panel { padding: 18px; margin: -16px auto 24px; }
+  .project-checkboxes { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+  .compare-table th, .compare-table td { padding: 10px 12px; font-size: 0.82rem; }
+  .compare-table th { font-size: 0.82rem; }
+}
+
+@media (max-width: 480px) {
+  .project-checkboxes { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <nav class="header-nav">
+    <a href="index.html">首页</a>
+    <a href="compare.html" class="active">项目对比</a>
+    <a href="recommendations.html">选型建议</a>
+    <a href="trends.html">趋势洞察</a>
+  </nav>
+  <div class="container header-content">
+    <h1>银行 AI Ops 项目对比</h1>
+    <p>选择 2-6 个项目进行多维度横向对比，快速洞察各项目在可观测性、告警管理、AI能力等方面的差异</p>
+  </div>
+</header>
+
+<div class="container">
+  <section class="section">
+    <div class="selector-panel">
+      <div class="selector-title">📋 选择对比项目</div>
+      <div class="selector-subtitle">请选择至少 2 个项目，最多 6 个进行对比</div>
+
+      <div class="selector-info">
+        <div class="selected-count">已选择 <strong id="selectedCount">0</strong> / 6 个项目</div>
+        <div class="selector-actions">
+          <button id="selectAllBtn">全选</button>
+          <button id="clearAllBtn">清空</button>
+        </div>
+      </div>
+
+      <div class="project-checkboxes" id="projectCheckboxes">
+        <div class="loading" id="checkboxLoading">
+          <div class="loading-spinner"></div>
+          <p style="font-size:0.85rem;">加载项目列表...</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="emptyState" class="empty-state" style="display:none;">
+      <h3>请至少选择 2 个项目</h3>
+      <p>勾选上方项目卡片进行对比</p>
+    </div>
+
+    <div id="tableContainer" style="display:none;">
+      <div class="table-wrapper">
+        <div class="table-scroll">
+          <table class="compare-table" id="compareTable">
+            <thead id="tableHead"></thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-links">
+      <a href="index.html">首页</a>
+      <a href="compare.html">项目对比</a>
+      <a href="recommendations.html">选型建议</a>
+      <a href="trends.html">趋势洞察</a>
+    </div>
+    <p class="footer-brand">银行 AI Ops 开源项目调研</p>
+    <p class="footer-meta">数据截至 2026年8月 | 本页面仅供参考，请以项目实际信息为准</p>
+  </div>
+</footer>
+
+<script>
+(function() {
+  const OBSERVABILITY_KEYWORDS = /(monitor|trac|log|metric|apm|observ|telemetry|ebpf|service map|dashboard|realtime|real-time|open telemetry|opentelemetry|analytics|trace|distributed tracing)/i;
+  const ALERTING_KEYWORDS = /(alert|alarm|notification|incident|deduplicat|correlat|event)/i;
+  const AI_KEYWORDS = /(ai|llm|agent|anomaly|root cause|machine learning|intelligent|aiops|forecast|automation|tool use|prompt|skill|llm|model)/i;
+
+  const OBSERVABILITY_CATEGORIES = ['observability', 'log-analysis'];
+  const ALERTING_CATEGORIES = ['alerting'];
+  const AI_CATEGORIES = ['ai-agent'];
+
+  const DEPLOYMENT_LABELS = {
+    'cloud-native': '云原生',
+    'vm': '虚拟机',
+    'physical': '物理机',
+    'offline': '离线部署'
+  };
+
+  const state = {
+    projects: [],
+    selectedIds: new Set(),
+    sortKey: null,
+    sortDir: null
+  };
+
+  function init() {
+    setupButtons();
+    loadData();
+  }
+
+  function setupButtons() {
+    document.getElementById('selectAllBtn').addEventListener('click', () => {
+      state.selectedIds = new Set(state.projects.slice(0, 6).map(p => p.name));
+      renderCheckboxes();
+      renderTable();
+    });
+
+    document.getElementById('clearAllBtn').addEventListener('click', () => {
+      state.selectedIds.clear();
+      renderCheckboxes();
+      renderTable();
+    });
+  }
+
+  async function loadData() {
+    try {
+      const response = await fetch('data/bank-aiops-projects.json', { cache: 'no-store' });
+      if (!response.ok) throw new Error('网络请求失败: ' + response.status);
+      const data = await response.json();
+      if (!data.projects || !Array.isArray(data.projects)) throw new Error('数据格式错误');
+      state.projects = data.projects;
+      const defaultSelected = state.projects.slice(0, 3).map(p => p.name);
+      state.selectedIds = new Set(defaultSelected);
+      renderCheckboxes();
+      renderTable();
+    } catch (err) {
+      showError(err.message);
+    }
+  }
+
+  function showError(msg) {
+    const container = document.getElementById('projectCheckboxes');
+    container.innerHTML = `
+      <div class="error-state" style="grid-column: 1/-1;">
+        <h3>⚠️ 加载数据失败</h3>
+        <p>${msg}</p>
+        <p style="margin-top: 8px; font-size: 0.85rem;">请确保 <code>data/bank-aiops-projects.json</code> 文件存在且格式正确</p>
+        <button onclick="location.reload()">重试</button>
+      </div>
+    `;
+  }
+
+  function renderCheckboxes() {
+    const container = document.getElementById('projectCheckboxes');
+    const countEl = document.getElementById('selectedCount');
+    countEl.textContent = state.selectedIds.size;
+
+    container.innerHTML = state.projects.map(p => {
+      const checked = state.selectedIds.has(p.name);
+      const disabled = !checked && state.selectedIds.size >= 6;
+      const starsStr = p.stars >= 1000 ? (p.stars / 1000).toFixed(1) + 'k' : p.stars;
+      let dotsHtml = '';
+      for (let i = 0; i < 5; i++) {
+        dotsHtml += `<div class="pc-maturity-dot ${i < p.maturity ? 'filled' : ''}"></div>`;
+      }
+      return `
+        <label class="project-checkbox ${checked ? 'checked' : ''} ${disabled ? 'disabled' : ''}" data-name="${p.name}">
+          <input type="checkbox" ${checked ? 'checked' : ''} ${disabled ? 'disabled' : ''}>
+          <div class="pc-info">
+            <div class="pc-name">${p.name}</div>
+            <div class="pc-meta">
+              <span class="pc-stars">⭐ ${starsStr}</span>
+              <span class="pc-maturity">${dotsHtml}</span>
+            </div>
+          </div>
+        </label>
+      `;
+    }).join('');
+
+    container.querySelectorAll('.project-checkbox').forEach(cb => {
+      cb.addEventListener('click', e => {
+        e.preventDefault();
+        if (cb.classList.contains('disabled')) return;
+        const name = cb.dataset.name;
+        if (state.selectedIds.has(name)) {
+          state.selectedIds.delete(name);
+        } else {
+          if (state.selectedIds.size >= 6) return;
+          state.selectedIds.add(name);
+        }
+        renderCheckboxes();
+        renderTable();
+      });
+    });
+  }
+
+  function categorizeFeatures(project) {
+    const features = project.features || [];
+    const categories = new Set(project.category || []);
+
+    const obsFeatures = [];
+    const alertFeatures = [];
+    const aiFeatures = [];
+
+    features.forEach(f => {
+      if (OBSERVABILITY_KEYWORDS.test(f)) obsFeatures.push(f);
+      if (ALERTING_KEYWORDS.test(f)) alertFeatures.push(f);
+      if (AI_KEYWORDS.test(f)) aiFeatures.push(f);
+    });
+
+    if (OBSERVABILITY_CATEGORIES.some(c => categories.has(c))) {
+      features.forEach(f => {
+        if (!obsFeatures.includes(f) && (f.toLowerCase().includes('monitor') || f.toLowerCase().includes('observ'))) {
+          obsFeatures.push(f);
+        }
+      });
+    }
+
+    if (ALERTING_CATEGORIES.some(c => categories.has(c))) {
+      features.forEach(f => {
+        if (!alertFeatures.includes(f) && (f.toLowerCase().includes('alert') || f.toLowerCase().includes('incident'))) {
+          alertFeatures.push(f);
+        }
+      });
+    }
+
+    if (AI_CATEGORIES.some(c => categories.has(c))) {
+      features.forEach(f => {
+        if (!aiFeatures.includes(f)) aiFeatures.push(f);
+      });
+    }
+
+    return {
+      observability: obsFeatures.length ? [...new Set(obsFeatures)] : [],
+      alerting: alertFeatures.length ? [...new Set(alertFeatures)] : [],
+      ai: aiFeatures.length ? [...new Set(aiFeatures)] : []
+    };
+  }
+
+  function getMaturityClass(level) {
+    if (level >= 4) return 'maturity-high';
+    if (level === 3) return 'maturity-medium';
+    return 'maturity-low';
+  }
+
+  function getMaturityLabel(level) {
+    if (level >= 4) return '高';
+    if (level === 3) return '中';
+    return '低';
+  }
+
+  function getPrimaryLanguage(stack) {
+    if (!stack || stack.length === 0) return '-';
+    return stack[0];
+  }
+
+  function renderFeatureList(features, emptyText) {
+    if (!features || features.length === 0) {
+      return `<div class="feature-list"><span class="feature empty">${emptyText || '未提及'}</span></div>`;
+    }
+    const list = features.slice(0, 4).map(f => `<span class="feature">${f}</span>`).join('');
+    const more = features.length > 4 ? `<span class="feature" style="color:var(--slate-400); font-size:0.75rem;">+${features.length - 4} 更多</span>` : '';
+    return `<div class="feature-list">${list}${more}</div>`;
+  }
+
+  function renderStars(stars) {
+    return `<span class="stars-cell" title="${stars.toLocaleString()} Stars">
+      <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      ${stars.toLocaleString()}
+    </span>`;
+  }
+
+  function renderBinary(yes, yesText, noText) {
+    if (yes) {
+      return `<span class="binary-indicator yes"><span class="dot"></span>${yesText || '是'}</span>`;
+    }
+    return `<span class="binary-indicator no"><span class="dot"></span>${noText || '否'}</span>`;
+  }
+
+  function renderMaturity(level) {
+    const cls = getMaturityClass(level);
+    let dotsHtml = '';
+    for (let i = 0; i < 5; i++) {
+      dotsHtml += `<div class="maturity-dot ${i < level ? 'filled' : ''}"></div>`;
+    }
+    return `<div class="maturity-cell ${cls}">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <div class="maturity-dots">${dotsHtml}</div>
+        <span class="maturity-badge">${getMaturityLabel(level)} (${level}/5)</span>
+      </div>
+    </div>`;
+  }
+
+  function renderDeployment(deployment) {
+    if (!deployment || deployment.length === 0) {
+      return `<span style="color:var(--slate-400); font-size:0.85rem;">未明确</span>`;
+    }
+    const tags = deployment.map(d => `<span class="tag tag-deploy">${DEPLOYMENT_LABELS[d] || d}</span>`).join('');
+    return `<div class="tag-group">${tags}</div>`;
+  }
+
+  function renderSecurity(security) {
+    if (!security || security.length === 0) {
+      return `<span style="color:var(--slate-400); font-size:0.85rem;">未明确</span>`;
+    }
+    const tags = security.map(s => `<span class="tag tag-security">${s}</span>`).join('');
+    return `<div class="tag-group">${tags}</div>`;
+  }
+
+  const COLUMNS = [
+    { key: 'name', label: '项目名称', sortable: false, sticky: true },
+    { key: 'stars', label: 'Stars', sortable: true, align: 'left' },
+    { key: 'license', label: '许可证', sortable: false },
+    { key: 'stack', label: '主语言', sortable: false },
+    { key: 'maturity', label: '成熟度', sortable: true },
+    { key: 'observability', label: '可观测性覆盖', sortable: false, className: 'observability' },
+    { key: 'alerting', label: '告警管理', sortable: false, className: 'alerting' },
+    { key: 'ai', label: 'AI能力', sortable: false, className: 'ai-features' },
+    { key: 'deployment', label: '部署方式', sortable: false },
+    { key: 'security', label: '安全特性', sortable: false },
+    { key: 'chineseSupport', label: '中文支持', sortable: true },
+    { key: 'offlineSupport', label: '离线部署', sortable: true },
+    { key: 'bankValue', label: '银行应用价值', sortable: false }
+  ];
+
+  function renderTable() {
+    const selected = state.projects.filter(p => state.selectedIds.has(p.name));
+    const emptyState = document.getElementById('emptyState');
+    const tableContainer = document.getElementById('tableContainer');
+
+    if (selected.length < 2) {
+      emptyState.style.display = 'block';
+      tableContainer.style.display = 'none';
+      return;
+    }
+
+    emptyState.style.display = 'none';
+    tableContainer.style.display = 'block';
+
+    const sorted = getSortedProjects(selected);
+
+    const thead = document.getElementById('tableHead');
+    thead.innerHTML = '<tr>' + COLUMNS.map(col => {
+      const sortIcon = col.sortable ? `<span class="sort-icon">▼</span>` : '';
+      const sortClass = state.sortKey === col.key ? `sort-active sort-${state.sortDir}` : '';
+      const stickyClass = col.sticky ? 'col-sticky' : '';
+      return `<th class="${sortClass} ${stickyClass}" data-sort="${col.sortable ? col.key : ''}">${col.label}${sortIcon}</th>`;
+    }).join('') + '</tr>';
+
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = sorted.map(p => {
+      const cat = categorizeFeatures(p);
+      const mClass = getMaturityClass(p.maturity);
+      const stickyClass = COLUMNS.map(c => c.sticky ? 'col-sticky' : '');
+      return `<tr>
+        <td class="${stickyClass[0]}">
+          <div class="project-name-cell">
+            <a href="${p.url}" class="name-link" target="_blank" rel="noopener">${p.name}</a>
+            <span class="desc">${p.description || ''}</span>
+          </div>
+        </td>
+        <td>${renderStars(p.stars)}</td>
+        <td><span class="tag tag-license">${p.license}</span></td>
+        <td><span class="primary-lang">${getPrimaryLanguage(p.stack)}</span></td>
+        <td class="${mClass}">${renderMaturity(p.maturity)}</td>
+        <td class="observability">${renderFeatureList(cat.observability, '无专属特性')}</td>
+        <td class="alerting">${renderFeatureList(cat.alerting, '无告警特性')}</td>
+        <td class="ai-features">${renderFeatureList(cat.ai, '无AI特性')}</td>
+        <td>${renderDeployment(p.deployment)}</td>
+        <td>${renderSecurity(p.security)}</td>
+        <td class="support-cell">${renderBinary(p.chineseSupport)}</td>
+        <td class="support-cell">${renderBinary(p.offlineSupport)}</td>
+        <td><div class="bank-value-cell">${p.bankValue}</div></td>
+      </tr>`;
+    }).join('');
+
+    thead.querySelectorAll('th[data-sort]').forEach(th => {
+      th.addEventListener('click', () => {
+        const key = th.dataset.sort;
+        if (!key) return;
+        if (state.sortKey === key) {
+          state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+          state.sortKey = key;
+          state.sortDir = 'desc';
+        }
+        renderTable();
+      });
+    });
+  }
+
+  function getSortedProjects(list) {
+    const sorted = [...list];
+    if (!state.sortKey || !state.sortDir) return sorted;
+
+    sorted.sort((a, b) => {
+      let valA, valB;
+      switch (state.sortKey) {
+        case 'stars':
+          valA = a.stars || 0; valB = b.stars || 0;
+          break;
+        case 'maturity':
+          valA = a.maturity || 0; valB = b.maturity || 0;
+          break;
+        case 'chineseSupport':
+          valA = a.chineseSupport ? 1 : 0; valB = b.chineseSupport ? 1 : 0;
+          break;
+        case 'offlineSupport':
+          valA = a.offlineSupport ? 1 : 0; valB = b.offlineSupport ? 1 : 0;
+          break;
+        default:
+          valA = 0; valB = 0;
+      }
+      return state.sortDir === 'asc' ? valA - valB : valB - valA;
+    });
+
+    return sorted;
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+
+</body>
+</html>

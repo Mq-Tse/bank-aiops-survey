@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>银行 AI Ops 技术趋势洞察</title>
+<style>
+:root {
+  --primary: #1e3a5f;
+  --primary-light: #2c5282;
+  --accent: #3b82f6;
+  --accent-light: #60a5fa;
+  --slate-50: #f8fafc;
+  --slate-100: #f1f5f9;
+  --slate-200: #e2e8f0;
+  --slate-300: #cbd5e1;
+  --slate-400: #94a3b8;
+  --slate-500: #64748b;
+  --slate-600: #475569;
+  --slate-700: #334155;
+  --slate-800: #1e293b;
+  --slate-900: #0f172a;
+  --success: #10b981;
+  --success-light: #d1fae5;
+  --warning: #f59e0b;
+  --warning-light: #fef3c7;
+  --danger: #ef4444;
+  --danger-light: #fee2e2;
+  --info: #0ea5e9;
+  --info-light: #e0f2fe;
+  --card-bg: #ffffff;
+  --card-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06);
+  --card-shadow-hover: 0 4px 12px rgba(0,0,0,0.08), 0 8px 32px rgba(30,58,95,0.12);
+  --radius: 12px;
+  --radius-lg: 16px;
+  --transition: cubic-bezier(0.4, 0, 0.2, 1);
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-sans);
+  background: linear-gradient(180deg, var(--slate-50) 0%, var(--slate-100) 100%);
+  color: var(--slate-800);
+  line-height: 1.75;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  font-size: 0.95rem;
+}
+.container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 32px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.sidebar {
+  position: sticky;
+  top: 24px;
+  align-self: start;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  padding: 20px;
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--slate-100);
+}
+.sidebar h3 {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--slate-400);
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--slate-100);
+}
+.sidebar nav { display: flex; flex-direction: column; gap: 2px; }
+.sidebar a {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: var(--slate-600);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s var(--transition);
+  border-left: 3px solid transparent;
+}
+.sidebar a:hover {
+  background: var(--slate-50);
+  color: var(--accent);
+  border-left-color: var(--accent-light);
+}
+.sidebar a.active {
+  background: linear-gradient(90deg, rgba(59,130,246,0.08) 0%, transparent 100%);
+  color: var(--primary);
+  border-left-color: var(--accent);
+  font-weight: 600;
+}
+.sidebar a.sub-nav {
+  padding-left: 28px;
+  font-size: 0.8rem;
+  color: var(--slate-500);
+}
+.main-content { min-width: 0; }
+.page-header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: white;
+  padding: 56px 0 44px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+.top-nav {
+  position: absolute;
+  top: 20px;
+  right: 32px;
+  z-index: 10;
+  display: flex;
+  gap: 6px;
+}
+.top-nav a {
+  color: rgba(255,255,255,0.85);
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.2s var(--transition);
+  white-space: nowrap;
+}
+.top-nav a:hover {
+  background: rgba(255,255,255,0.15);
+  color: white;
+}
+.top-nav a.active {
+  background: rgba(255,255,255,0.2);
+  color: white;
+  font-weight: 600;
+}
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.5;
+}
+.page-header-content { position: relative; z-index: 1; }
+.page-header h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 10px;
+}
+.page-header .subtitle {
+  font-size: 1.05rem;
+  opacity: 0.9;
+  max-width: 680px;
+  line-height: 1.6;
+}
+.page-header .meta-info {
+  display: flex;
+  gap: 24px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+.page-header .meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  opacity: 0.85;
+}
+.section { margin-bottom: 48px; }
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--slate-100);
+}
+.section-header .section-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+.section-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: -0.01em;
+}
+.section-header .section-badge {
+  font-size: 0.75rem;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  margin-left: auto;
+}
+.section-intro {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--slate-100);
+  margin-bottom: 20px;
+  color: var(--slate-700);
+  font-size: 0.9rem;
+  line-height: 1.75;
+}
+.section-intro p + p { margin-top: 10px; }
+.trend-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--slate-100);
+  margin-bottom: 20px;
+  transition: all 0.25s var(--transition);
+}
+.trend-card:hover {
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-1px);
+}
+.trend-card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.trend-card p {
+  font-size: 0.88rem;
+  color: var(--slate-700);
+  line-height: 1.7;
+  margin-bottom: 10px;
+}
+.trend-card p:last-child { margin-bottom: 0; }
+.data-callout {
+  background: linear-gradient(135deg, rgba(30,58,95,0.04) 0%, rgba(59,130,246,0.04) 100%);
+  border-left: 4px solid var(--accent);
+  padding: 14px 18px;
+  border-radius: 0 10px 10px 0;
+  margin: 16px 0;
+  font-size: 0.88rem;
+  color: var(--slate-700);
+  line-height: 1.65;
+}
+.data-callout strong { color: var(--primary); font-weight: 600; }
+.data-callout.highlight {
+  border-left-color: var(--success);
+  background: linear-gradient(135deg, rgba(16,185,129,0.05) 0%, rgba(59,130,246,0.03) 100%);
+}
+.data-callout.warning {
+  border-left-color: var(--warning);
+  background: linear-gradient(135deg, rgba(245,158,11,0.05) 0%, rgba(239,68,68,0.03) 100%);
+}
+.project-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+  margin: 16px 0;
+}
+.project-item {
+  padding: 14px 16px;
+  background: var(--slate-50);
+  border-radius: 10px;
+  border: 1px solid var(--slate-100);
+  transition: all 0.2s var(--transition);
+}
+.project-item:hover {
+  background: white;
+  box-shadow: var(--card-shadow);
+  border-color: var(--slate-200);
+}
+.project-item .pi-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.project-item .pi-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.project-item .pi-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--slate-900);
+}
+.project-item .pi-desc {
+  font-size: 0.82rem;
+  color: var(--slate-600);
+  line-height: 1.55;
+}
+.tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.highlight-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: var(--slate-50);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  color: var(--slate-700);
+  border: 1px solid var(--slate-100);
+  font-weight: 500;
+}
+.highlight-tag.positive { background: var(--success-light); color: #059669; border-color: #a7f3d0; }
+.highlight-tag.info { background: var(--info-light); color: #0284c7; border-color: #bae6fd; }
+.highlight-tag.warning { background: var(--warning-light); color: #d97706; border-color: #fde68a; }
+.timeline-visual {
+  position: relative;
+  padding: 20px 0 20px 32px;
+  margin: 20px 0;
+}
+.timeline-visual::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--accent) 0%, var(--primary-light) 100%);
+  border-radius: 2px;
+}
+.timeline-node {
+  position: relative;
+  margin-bottom: 24px;
+  padding: 14px 18px;
+  background: var(--slate-50);
+  border-radius: 10px;
+  border: 1px solid var(--slate-100);
+  transition: all 0.2s var(--transition);
+}
+.timeline-node:last-child { margin-bottom: 0; }
+.timeline-node:hover { background: white; box-shadow: var(--card-shadow); }
+.timeline-node::before {
+  content: '';
+  position: absolute;
+  left: -26px;
+  top: 18px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid var(--accent);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+}
+.timeline-node .tn-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.timeline-node .tn-phase {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+.timeline-node .tn-duration {
+  font-size: 0.75rem;
+  color: var(--slate-500);
+  background: var(--slate-200);
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+  margin-left: auto;
+}
+.timeline-node .tn-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--slate-900);
+}
+.timeline-node .tn-desc {
+  font-size: 0.85rem;
+  color: var(--slate-600);
+  line-height: 1.65;
+}
+.triple-layout {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 20px 0;
+}
+.triple-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--slate-100);
+  transition: all 0.25s var(--transition);
+}
+.triple-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--card-shadow-hover);
+}
+.triple-card h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.triple-card p {
+  font-size: 0.85rem;
+  color: var(--slate-600);
+  line-height: 1.6;
+}
+.maturity-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0;
+}
+.maturity-bar .mb-label {
+  font-size: 0.82rem;
+  color: var(--slate-500);
+  min-width: 90px;
+}
+.maturity-bar .mb-track {
+  flex: 1;
+  height: 10px;
+  background: var(--slate-200);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.maturity-bar .mb-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--primary-light) 100%);
+  transition: width 1s var(--transition);
+}
+.maturity-bar .mb-value {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--primary);
+  min-width: 50px;
+  text-align: right;
+}
+.comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  margin: 16px 0;
+}
+.comparison-cell {
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--slate-100);
+  font-size: 0.85rem;
+  color: var(--slate-700);
+  line-height: 1.6;
+}
+.comparison-cell .cc-label {
+  font-size: 0.78rem;
+  color: var(--slate-500);
+  margin-bottom: 4px;
+}
+.comparison-cell .cc-value {
+  font-weight: 600;
+  color: var(--primary);
+}
+.comparison-cell.best {
+  background: var(--success-light);
+  border-color: #a7f3d0;
+}
+.comparison-cell.best .cc-value { color: #065f46; }
+.comparison-cell.worst {
+  background: var(--slate-50);
+}
+.callout-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin: 16px 0;
+}
+.callout-stat {
+  background: white;
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--slate-100);
+  text-align: center;
+  transition: all 0.25s var(--transition);
+}
+.callout-stat:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--card-shadow-hover);
+}
+.callout-stat .cs-num {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--accent);
+  line-height: 1.2;
+}
+.callout-stat .cs-num.success { color: var(--success); }
+.callout-stat .cs-num.warning { color: var(--warning); }
+.callout-stat .cs-num.danger { color: var(--danger); }
+.callout-stat .cs-unit {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--slate-500);
+  margin-left: 2px;
+}
+.callout-stat .cs-label {
+  font-size: 0.82rem;
+  color: var(--slate-500);
+  margin-top: 6px;
+  line-height: 1.4;
+}
+.safety-design {
+  background: linear-gradient(135deg, rgba(16,185,129,0.04) 0%, rgba(59,130,246,0.04) 100%);
+  border: 1px solid rgba(16,185,129,0.15);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  margin: 20px 0;
+}
+.safety-design h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.safety-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  font-size: 0.85rem;
+  color: var(--slate-700);
+  line-height: 1.6;
+  border-bottom: 1px solid rgba(16,185,129,0.1);
+}
+.safety-item:last-child { border-bottom: none; }
+.safety-item .si-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--success-light);
+  color: #059669;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+.safety-item strong { color: var(--primary); }
+.roadmap-section {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--slate-100);
+}
+.roadmap-timeline { position: relative; padding-left: 32px; }
+.roadmap-timeline::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  background: linear-gradient(180deg, var(--accent) 0%, var(--primary-light) 100%);
+  border-radius: 2px;
+}
+.roadmap-phase {
+  position: relative;
+  margin-bottom: 28px;
+  padding: 16px 18px;
+  background: var(--slate-50);
+  border-radius: 12px;
+  border: 1px solid var(--slate-100);
+  transition: all 0.25s var(--transition);
+}
+.roadmap-phase:hover { background: white; box-shadow: var(--card-shadow-hover); }
+.roadmap-phase::before {
+  content: '';
+  position: absolute;
+  left: -26px;
+  top: 18px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid var(--accent);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+}
+.phase-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.phase-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--primary-light) 100%);
+  color: white; font-weight: 700; font-size: 0.85rem;
+}
+.phase-title { font-size: 1.05rem; font-weight: 700; color: var(--primary); }
+.phase-duration {
+  font-size: 0.78rem;
+  color: var(--slate-500);
+  background: var(--slate-200);
+  padding: 2px 10px;
+  border-radius: 999px;
+  margin-left: auto;
+  font-weight: 600;
+}
+.phase-desc { font-size: 0.88rem; color: var(--slate-700); line-height: 1.65; margin-bottom: 12px; }
+.phase-deliverables { display: flex; flex-wrap: wrap; gap: 6px; }
+.deliverable-tag {
+  padding: 4px 10px;
+  background: white;
+  border: 1px solid var(--slate-200);
+  border-radius: 6px;
+  font-size: 0.78rem;
+  color: var(--slate-700);
+  font-weight: 500;
+}
+.footer {
+  text-align: center;
+  padding: 32px 20px;
+  color: var(--slate-400);
+  font-size: 0.85rem;
+  border-top: 1px solid var(--slate-100);
+  background: white;
+  margin-top: 40px;
+}
+.footer .footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.footer .footer-links a {
+  color: var(--slate-500);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.2s var(--transition);
+}
+.footer .footer-links a:hover {
+  color: var(--accent);
+}
+.footer .footer-brand {
+  font-weight: 600;
+  color: var(--slate-600);
+  margin-bottom: 4px;
+}
+.footer .footer-meta {
+  font-size: 0.8rem;
+  color: var(--slate-400);
+}
+.toc-mobile { display: none; }
+@media (max-width: 1024px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .toc-mobile { display: block; margin-bottom: 24px; }
+  .toc-mobile select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--slate-200);
+    border-radius: 10px;
+    font-size: 0.88rem;
+    background: white;
+    color: var(--slate-700);
+    font-family: var(--font-sans);
+  }
+  .page-header h1 { font-size: 1.7rem; }
+  .triple-layout { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .page-header { padding: 40px 0 32px; }
+  .page-header h1 { font-size: 1.5rem; }
+  .page-header .subtitle { font-size: 0.92rem; }
+  .top-nav { top: 12px; right: 12px; gap: 2px; flex-wrap: wrap; }
+  .top-nav a { padding: 6px 10px; font-size: 0.78rem; }
+  .section-header h2 { font-size: 1.25rem; }
+  .trend-card,
+  .roadmap-section,
+  .safety-design,
+  .section-intro { padding: 18px; }
+  .container, .layout { padding: 0 16px; }
+}
+@media print {
+  body { background: white; font-size: 11pt; }
+  .sidebar, .toc-mobile, .page-header::before { display: none !important; }
+  .page-header {
+    background: var(--primary) !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    padding: 24px 0;
+  }
+  .layout { display: block; max-width: 100%; padding: 0; }
+  .container { max-width: 100%; padding: 0; }
+  .trend-card,
+  .roadmap-section,
+  .safety-design,
+  .section-intro,
+  .timeline-node {
+    box-shadow: none;
+    break-inside: avoid;
+    border: 1px solid var(--slate-300);
+  }
+  .section { break-before: page; }
+  .section:first-of-type { break-before: auto; }
+  .footer { border-top: 1px solid var(--slate-300); }
+  .callout-stat,
+  .project-item,
+  .triple-card {
+    box-shadow: none;
+    break-inside: avoid;
+  }
+}
+::selection { background: rgba(59,130,246,0.2); }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--slate-100); }
+::-webkit-scrollbar-thumb { background: var(--slate-300); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--slate-400); }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <nav class="top-nav">
+    <a href="index.html">首页</a>
+    <a href="compare.html">项目对比</a>
+    <a href="recommendations.html">选型建议</a>
+    <a href="trends.html" class="active">趋势洞察</a>
+  </nav>
+  <div class="container page-header-content">
+    <h1>银行 AI Ops 技术趋势洞察</h1>
+    <p class="subtitle">深度解析 eBPF、AI Agent、开源标准、国产生态等关键技术方向，为银行智能运维建设提供前瞻性指导</p>
+    <div class="meta-info">
+      <div class="meta-item"><span>📅</span>数据截至：2026 年 8 月</div>
+      <div class="meta-item"><span>🏦</span>面向国内银行</div>
+      <div class="meta-item"><span>🔭</span>趋势周期：2026–2028</div>
+    </div>
+  </div>
+</header>
+
+<div class="toc-mobile">
+  <select onchange="location.hash = this.value">
+    <option value="">—— 快速跳转 ——</option>
+    <option value="overview">趋势总览</option>
+    <option value="ebpf">趋势一：eBPF 内核级可观测性</option>
+    <option value="ai-agent">趋势二：AI Agent 自主运维</option>
+    <option value="open-source">趋势三：开源标准治理</option>
+    <option value="domestic">趋势四：国产开源生态</option>
+    <option value="cost">趋势五：成本优化驱动力</option>
+    <option value="roadmap">趋势总结与展望</option>
+  </select>
+</div>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <h3>📋 目录导航</h3>
+    <nav>
+      <a href="#overview" class="nav-link">📊 趋势总览</a>
+      <a href="#ebpf" class="nav-link">🔧 趋势一：eBPF 内核级可观测性</a>
+      <a href="#ai-agent" class="nav-link">🤖 趋势二：AI Agent 自主运维</a>
+      <a href="#open-source" class="nav-link">🔓 趋势三：开源标准治理</a>
+      <a href="#domestic" class="nav-link">🇨🇳 趋势四：国产开源生态</a>
+      <a href="#cost" class="nav-link">💰 趋势五：成本优化驱动力</a>
+      <a href="#roadmap" class="nav-link">🗺️ 趋势总结与展望</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+
+    <section class="section" id="overview">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, rgba(59,130,246,0.15) 0%, rgba(30,58,95,0.15) 100%);">📊</div>
+        <h2>趋势总览</h2>
+        <span class="section-badge" style="background: rgba(59,130,246,0.1); color: var(--accent);">执行摘要</span>
+      </div>
+      <div class="section-intro">
+        <p>当前银行 AI Ops 正处于从"被动监控"向"主动智能"跃迁的关键时期。五大核心技术趋势正在重塑银行运维体系：<strong>eBPF 内核级可观测性</strong>实现零侵入监控、<strong>AI Agent</strong> 驱动自主运维、<strong>开源标准治理</strong>避免厂商锁定、<strong>国产开源生态</strong>加速信创落地、<strong>成本优化</strong>成为核心驱动力。</p>
+        <p>本报告基于对国内外银行 AIOps 实践的调研分析，结合开源社区最新进展，为银行技术管理者提供趋势洞察与行动建议。</p>
+      </div>
+      <div class="callout-grid">
+        <div class="callout-stat">
+          <div class="cs-num">27<span class="cs-unit">%</span></div>
+          <div class="cs-label">某银行使用 eBPF 后 3 个月云成本降幅</div>
+        </div>
+        <div class="callout-stat">
+          <div class="cs-num success">1000<span class="cs-unit">+</span></div>
+          <div class="cs-label">夜莺在国内企业部署数量</div>
+        </div>
+        <div class="callout-stat">
+          <div class="cs-num warning">140<span class="cs-unit">x</span></div>
+          <div class="cs-label">OpenObserve 相比 ES 存储成本优势</div>
+        </div>
+        <div class="callout-stat">
+          <div class="cs-num">70<span class="cs-unit">%</span></div>
+          <div class="cs-label">AI 告警关联可降低的告警数量</div>
+        </div>
+        <div class="callout-stat">
+          <div class="cs-num danger">60<span class="cs-unit">%+</span></div>
+          <div class="cs-label">AI Agent 缩短故障定位时间</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="ebpf">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, rgba(59,130,246,0.15) 0%, rgba(30,58,95,0.15) 100%);">🔧</div>
+        <h2>趋势一：eBPF 内核级可观测性革命</h2>
+        <span class="section-badge" style="background: rgba(59,130,246,0.1); color: var(--accent);">核心技术</span>
+      </div>
+      <div class="section-intro">
+        <p>eBPF（Extended Berkeley Packet Filter）是 Linux 内核的一项革命性技术，允许在不修改应用代码的前提下，从<strong>操作系统内核层面</strong>动态采集网络、系统、进程等各类运行时数据。对银行而言，eBPF 意味着<strong>真正的零侵入监控</strong>——告别代码埋点、告别 Agent 部署、告别应用重启。</p>
+      </div>
+
+      <div class="trend-card">
+        <h3>💡 什么是 eBPF？为什么对银行至关重要？</h3>
+        <p>eBPF 是一种在内核中运行沙箱程序的技术，可在 <strong>不修改一行应用代码</strong> 的情况下，动态追踪系统调用、网络数据包、进程行为。与传统 APM 探针（如 Java Agent、Node.js 探针）相比，eBPF 具有三大核心优势：</p>
+        <div class="triple-layout">
+          <div class="triple-card">
+            <h4>🏛️ 内核级隔离</h4>
+            <p>运行在内核态，与应用完全隔离。即使监控组件出现问题，也不会影响业务系统稳定性，满足银行生产环境的最高安全要求。</p>
+          </div>
+          <div class="triple-card">
+            <h4>🚫 零代码修改</h4>
+            <p>无需对应用进行任何代码侵入或重新编译，特别适合银行大量遗留系统（Oracle、DB2、CICS 等）的快速接入，消除部署风险。</p>
+          </div>
+          <div class="triple-card">
+            <h4>⚡ 动态按需加载</h4>
+            <p>监控程序可热插拔，无需重启应用。运维人员可在生产环境实时开启特定监控，极大提升故障排查效率。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="trend-card">
+        <h3>🔑 核心项目生态</h3>
+        <div class="project-list">
+          <div class="project-item">
+            <div class="pi-head">
+              <div class="pi-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white;">C</div>
+              <div class="pi-name">Coroot</div>
+            </div>
+            <div class="pi-desc">基于 eBPF 的零侵入可观测平台，自动发现服务拓扑、识别系统依赖（MySQL、Redis、Kafka 等），无需任何埋点。</div>
+            <div class="tag-row">
+              <span class="highlight-tag positive">✅ 零侵入</span>
+              <span class="highlight-tag positive">✅ 自动拓扑</span>
+              <span class="highlight-tag info">💡 开源</span>
+            </div>
+          </div>
+          <div class="project-item">
+            <div class="pi-head">
+              <div class="pi-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d9770 100%); color: white;">S</div>
+              <div class="pi-name">SkyWalking eBPF</div>
+            </div>
+            <div class="pi-desc">Apache 基金会 eBPF 探针，为 Go、Rust、Python 等非 Java 应用提供无侵入追踪能力，与 SkyWalking 主平台无缝集成。</div>
+            <div class="tag-row">
+              <span class="highlight-tag positive">✅ 多语言</span>
+              <span class="highlight-tag info">💡 Apache 顶级</span>
+            </div>
+          </div>
+          <div class="project-item">
+            <div class="pi-head">
+              <div class="pi-icon" style="background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); color: white;">N</div>
+              <div class="pi-name">Netdata</div>
+            </div>
+            <div class="pi-desc">实时性能监控工具，基于 eBPF 实现系统级指标采集，单节点部署即可提供丰富的实时图表和告警能力。</div>
+            <div class="tag-row">
+              <span class="highlight-tag positive">✅ 实时监控</span>
+              <span class="highlight-tag info">💡 轻量级</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="data-callout highlight">
+        <strong>🏦 银行价值：PCI-DSS 合规与生产安全</strong><br>
+        eBPF 的零侵入特性完美契合 PCI-DSS 对生产系统变更管控的严格要求。银行无需修改生产代码即可实现全面监控，<strong>大幅降低变更风险</strong>。同时，内核级隔离确保监控组件故障不会影响业务系统，达到金融级可用性标准。
+      </div>
+
+      <div class="data-callout">
+        <strong>📈 案例实践：某股份制银行 eBPF 落地效果</strong><br>
+        国内某大型股份制银行在核心交易、支付渠道、客户服务三大业务线部署 eBPF 方案后，<strong>3 个月内云资源成本降低 27%</strong>，故障定位时间从平均 45 分钟缩短至 8 分钟，系统可用性提升至 99.995%。
+      </div>
+
+      <div class="trend-card">
+        <h3>📅 行业采纳时间线</h3>
+        <div class="timeline-visual">
+          <div class="timeline-node">
+            <div class="tn-head">
+              <span class="tn-phase">2024–2025</span>
+              <span class="tn-duration">试点阶段</span>
+            </div>
+            <div class="tn-title">技术验证与小范围试点</div>
+            <div class="tn-desc">头部股份制银行和互联网银行开始在非核心系统试点 eBPF 技术，验证技术可行性。Coroot、SkyWalking eBPF 等项目进入银行技术选型视野。</div>
+          </div>
+          <div class="timeline-node">
+            <div class="tn-head">
+              <span class="tn-phase">2025–2026</span>
+              <span class="tn-duration">推广阶段</span>
+            </div>
+            <div class="tn-title">核心系统逐步采纳</div>
+            <div class="tn-desc">大型银行开始在核心交易、支付等关键业务系统中应用 eBPF。国内 eBPF 社区快速发展，相关技术分享和案例实践在金融行业广泛传播。</div>
+          </div>
+          <div class="timeline-node">
+            <div class="tn-head">
+              <span class="tn-phase">2026–2028</span>
+              <span class="tn-duration">普及阶段</span>
+            </div>
+            <div class="tn-title">成为可观测性标配</div>
+            <div class="tn-desc">eBPF 有望成为银行可观测性基础设施的标配技术，与 OpenTelemetry 标准深度融合。预计到 2028 年，超过 60% 的国内大型银行将采用 eBPF 方案。</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="ai-agent">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, rgba(236,72,153,0.15) 0%, rgba(219,39,119,0.15) 100%);">🤖</div>
+        <h2>趋势二：AI Agent 驱动的自主运维</h2>
+        <span class="section-badge" style="background: rgba(236,72,153,0.1); color: #ec4899;">前沿方向</span>
+      </div>
+      <div class="section-intro">
+        <p>AIOps 正在从<strong>被动告警</strong>向<strong>主动自愈</strong>演进。AI Agent 作为运维智能化的核心载体，能够自动执行根因分析、故障排查、报告生成等高级任务，最终实现"问题自动发现、自动诊断、自动修复"的自主运维闭环。</p>
+      </div>
+
+      <div class="trend-card">
+        <h3>🔄 从被动到主动的演进路径</h3>
+        <div class="timeline-visual">
+          <div class="timeline-node">
+            <div class="tn-head">
+              <span class="tn-phase">第一阶段</span>
+              <span class="tn-duration">传统监控</span>
+            </div>
+            <div class="tn-title">被动告警与人工响应</div>
+            <div class="tn-desc">依赖阈值告警触发，运维人员手动排查。平均响应时间长、告警风暴严重，运维人员疲于奔命。</div>
+          </div>
+          <div class="timeline-node">
+            <div class="tn-head">
+              <span class="tn-phase">第二阶段</span>
+              <span class="tn-duration">智能辅助</span>
+            </div>
+            <div class="tn-title">AI 辅助根因分析</div>
+            <div class="tn-desc">AI 系统自动关联告警、推荐排查路径，生成诊断建议。运维人员审核后执行操作，AI 处于"顾问"角色。</div>
+          </div>
+          <div class="timeline-node">
+            <div class="tn-head">
+              <span class="tn-phase">第三阶段</span>
+              <span class="tn-duration">自主执行</span>
+            </div>
+            <div class="tn-title">AI Agent 自动修复</div>
+            <div class="tn-desc">AI Agent 自动执行诊断脚本、重启服务、扩容资源等操作。高危操作需人工确认，低风险操作自动执行，实现 90%+ 故障的自主修复。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="trend-card">
+        <h3>🔑 核心项目与能力</h3>
+        <div class="project-list">
+          <div class="project-item">
+            <div class="pi-head">
+              <div class="pi-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white;">H</div>
+              <div class="pi-name">HolmesGPT</div>
+            </div>
+            <div class="pi-desc">CNCF 沙箱项目，以"安全优先"为设计理念，只读沙箱环境确保零生产风险。核心能力包括自动化 RCA、智能故障排查、自然语言交互。</div>
+            <div class="tag-row">
+              <span class="highlight-tag positive">✅ CNCF 沙箱</span>
+              <span class="highlight-tag positive">✅ 只读安全</span>
+              <span class="highlight-tag info">💡 多模型支持</span>
+            </div>
+          </div>
+          <div class="project-item">
+            <div class="pi-head">
+              <div class="pi-icon" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white;">M</div>
+              <div class="pi-name">Microsoft AIOpsLab</div>
+            </div>
+            <div class="pi-desc">微软开源的 AI Agent 构建框架，提供丰富的 AIOps 技能集，支持与 ServiceNow、Jira 等企业系统深度集成。</div>
+            <div class="tag-row">
+              <span class="highlight-tag positive">✅ 企业级</span>
+              <span class="highlight-tag info">💡 高度可定制</span>
+            </div>
+          </div>
+          <div class="project-item">
+            <div class="pi-head">
+              <div class="pi-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d9770 100%); color: white;">K</div>
+              <div class="pi-name">Keep AI 特性</div>
+            </div>
+            <div class="pi-desc">Keep 平台内置的 AI 告警关联能力，通过语义理解和时间窗口聚合，将海量告警自动关联为可操作的 Incident。</div>
+            <div class="tag-row">
+              <span class="highlight-tag positive">✅ AI 告警关联</span>
+              <span class="highlight-tag info">💡 110+ 集成</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="trend-card">
+        <h3>🏦 银行核心应用场景</h3>
+        <div class="triple-layout">
+          <div class="triple-card">
+            <h4>🔍 自动化根因分析</h4>
+            <p>当异常发生时，AI Agent 自动拉取指标、日志、链路数据，进行跨系统关联分析，快速定位故障根因。可将<strong>故障定位时间缩短 60%+</strong>。</p>
+          </div>
+          <div class="triple-card">
+            <h4>⚡ 智能故障响应</h4>
+            <p>AI Agent 根据故障类型自动执行标准化响应流程：重启服务、切换流量、扩容资源等。<strong>90% 的常见故障可实现自动修复</strong>。</p>
+          </div>
+          <div class="triple-card">
+            <h4>💬 自然语言运维助手</h4>
+            <p>运维人员可用自然语言（中文）查询系统状态、分析历史故障、生成运维报告。降低运维知识门槛，提升团队协作效率。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="safety-design">
+        <h4>🛡️ 安全设计：银行级防护机制</h4>
+        <div class="safety-item">
+          <div class="si-icon">🔒</div>
+          <div><strong>只读沙箱模式：</strong>AI Agent 默认仅具有只读权限，所有操作均在隔离的沙箱环境中执行，<strong>绝对禁止对生产系统进行未经审批的写入操作</strong>。</div>
+        </div>
+        <div class="safety-item">
+          <div class="si-icon">👥</div>
+          <div><strong>人工确认机制（Human-in-the-Loop）：</strong>高风险操作（如服务重启、配置变更）必须经过人工审批确认。AI Agent 仅能执行低风险的只读诊断任务。</div>
+        </div>
+        <div class="safety-item">
+          <div class="si-icon">🔑</div>
+          <div><strong>RBAC 权限集成：</strong>AI Agent 与银行现有 RBAC 权限体系深度集成，严格遵循最小权限原则，不同角色的 Agent 拥有不同的操作权限。</div>
+        </div>
+        <div class="safety-item">
+          <div class="si-icon">📋</div>
+          <div><strong>全链路审计日志：</strong>AI Agent 的每一次操作（包括对话、数据查询、执行动作）都被完整记录，支持事后审计和合规检查。</div>
+        </div>
+      </div>
+
+      <div class="trend-card">
+        <h3>📊 成熟度评估（TRL）</h3>
+        <p>AI Agent 技术在银行领域的当前技术 readiness 等级：</p>
+        <div class="maturity-bar">
+          <span class="mb-label">根因分析</span>
+          <div class="mb-track"><div class="mb-fill" style="width: 82%;"></div></div>
+          <span class="mb-value">TRL 7</span>
+        </div>
+        <div class="maturity-bar">
+          <span class="mb-label">告警关联</span>
+          <div class="mb-track"><div class="mb-fill" style="width: 75%;"></div></div>
+          <span class="mb-value">TRL 6</span>
+        </div>
+        <div class="maturity-bar">
+          <span class="mb-label">自动修复</span>
+          <div class="mb-track"><div class="mb-fill" style="width: 50%;"></div></div>
+          <span class="mb-value">TRL 4</span>
+        </div>
+        <div class="maturity-bar">
+          <span class="mb-label">自然语言交互</span>
+          <div class="mb-track"><div class="mb-fill" style="width: 68%;"></div></div>
+          <span class="mb-value">TRL 5</span>
+        </div>
+        <p style="font-size: 0.82rem; color: var(--slate-500); margin-top: 12px;">* TRL 7 = 生产环境验证；TRL 5 = 实验室/试点验证；TRL 4 = 组件验证。参考 NASA TRL 标准。</p>
+      </div>
+    </section>
+
+    <section class="section" id="open-source">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, rgba(16,185,129,0.15) 0%, rgba(5,150,105,0.15) 100%);">🔓</div>
+        <h2>趋势三：开源标准治理与避免厂商锁定</h2>
+        <span class="section-badge" style="background: rgba(16,185,129,0.1); color: var(--success);">战略方向</span>
+      </div>
+      <div class="section-intro">
+        <p>银行 IT 系统的复杂性导致长期依赖多家供应商的专有解决方案，形成<strong>技术锁定</strong>。开源标准治理通过推动开放协议和互操作性，帮助银行摆脱对单一厂商的依赖，实现技术自主可控。</p>
+      </div>
+
+      <div class="trend-card">
+        <h3>🏛️ 关键标准组织与项目</h3>
+        <div class="project-list">
+          <div class="project-item">
+            <div class="pi-head">
+              <div class="pi-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white;">F</div>
+              <div class="pi-name">FINOS</div>
+            </div>
+            <div class="pi-desc">金融技术开放标准组织，致力于推动金融行业的开源标准建设。Fluxnova 等项目在其治理下成为金融流程编排的事实标准。</div>
+            <div class="tag-row">
+              <span class="highlight-tag positive">✅ 金融治理</span>
+              <span class="highlight-tag info">💡 行业标准</span>
+            </div>
+          </div>
+          <div class="project-item">
+            <div class="pi-head">
+              <div class="pi-icon" style="background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); color: white;">O</div>
+              <div class="pi-name">OpenTelemetry</div>
+            </div>
+            <div class="pi-desc">CNCF 毕业项目，成为可观测性数据格式的事实标准。统一指标、追踪、日志的数据模型，支持跨语言、跨平台的数据采集与分析。</div>
+            <div class="tag-row">
+              <span class="highlight-tag positive">✅ 数据标准</span>
+              <span class="highlight-tag info">💡 CNCF 毕业</span>
+            </div>
+          </div>
+          <div class="project-item">
+            <div class="pi-head">
+              <div class="pi-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d9770 100%); color: white;">C</div>
+              <div class="pi-name">CNCF Observability 生态</div>
+            </div>
+            <div class="pi-desc">CNCF 旗下多个可观测性相关项目（Prometheus、Grafana、OpenTelemetry、Thanos 等）形成完整生态，是云原生可观测性的基石。</div>
+            <div class="tag-row">
+              <span class="highlight-tag positive">✅ 云原生</span>
+              <span class="highlight-tag info">💡 完整生态</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="trend-card">
+        <h3>🔑 重点项目：Fluxnova（BPMN/DMN）</h3>
+        <p>Fluxnova 是 FINOS 治理下的开源流程编排引擎，实现了 <strong>BPMN 2.0</strong> 和 <strong>DMN 1.4</strong> 标准，专为金融行业设计。相比传统 BPM 工具，Fluxnova 的优势在于：</p>
+        <div class="triple-layout">
+          <div class="triple-card">
+            <h4>🏦 金融领域专业化</h4>
+            <p>内置金融行业流程模板（支付清算、风险审批、合规报告）、完备的审计日志、事务一致性保障。</p>
+          </div>
+          <div class="triple-card">
+            <h4>☁️ 云原生轻量化</h4>
+            <p>可嵌入现有微服务架构，无需独立部署 BPM 服务器。支持容器化部署，弹性伸缩。</p>
+          </div>
+          <div class="triple-card">
+            <h4>🔗 开放生态集成</h4>
+            <p>与 OpenTelemetry 可观测性体系无缝集成，流程状态可观测、可追踪。支持与主流工作流引擎互操作。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="trend-card">
+        <h3>💡 银行为何关注开源标准？</h3>
+        <div class="comparison-grid">
+          <div class="comparison-cell best">
+            <div class="cc-label">📜 监管合规</div>
+            <div class="cc-value">满足等保、PCI-DSS 对技术栈可审计、可验证的要求。</div>
+          </div>
+          <div class="comparison-cell best">
+            <div class="cc-label">💰 成本控制</div>
+            <div class="cc-value">开源方案无许可证费用，避免厂商涨价风险，TCO 可降低 60%+。</div>
+          </div>
+          <div class="comparison-cell best">
+            <div class="cc-label">🛡️ 技术主权</div>
+            <div class="cc-value">掌握核心技术控制权，不被单一厂商绑定，灵活选择最佳组件。</div>
+          </div>
+          <div class="comparison-cell">
+            <div class="cc-label">🔄 灵活演进</div>
+            <div class="cc-value">标准协议确保未来可平滑迁移到新技术，保护既有投资。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="data-callout">
+        <strong>🇨🇳 中国银行如何受益于开放标准</strong><br>
+        国内银行积极参与 OpenTelemetry、BPMN 等国际标准的制定与落地。一方面，开源标准使得国内银行可以自由选择信创环境（麒麟 OS、达梦数据库、OceanBase 等）下的最佳组件组合；另一方面，FINOS、CNCF 等组织中有越来越多的中国银行代表参与治理，推动标准更好地适配国内金融环境。
+      </div>
+    </section>
+
+    <section class="section" id="domestic">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, rgba(239,68,68,0.12) 0%, rgba(245,158,11,0.12) 100%);">🇨🇳</div>
+        <h2>趋势四：国产开源生态崛起</h2>
+        <span class="section-badge" style="background: rgba(239,68,68,0.1); color: var(--danger);">信创重点</span>
+      </div>
+      <div class="section-intro">
+        <p>在"信创"（信息技术应用创新）和"自主可控"政策的推动下，国产开源项目迎来爆发式增长。以<strong>夜莺（Nightingale）</strong>、<strong>SREWorks</strong> 为代表的国产 AIOps 开源项目，凭借本土化优势迅速获得国内金融机构的青睐。</p>
+      </div>
+
+      <div class="trend-card">
+        <h3>⭐ 核心国产项目</h3>
+        <div class="project-list">
+          <div class="project-item">
+            <div class="pi-head">
+              <div class="pi-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d9770 100%); color: white;">🌙</div>
+              <div class="pi-name">夜莺 Nightingale</div>
+            </div>
+            <div class="pi-desc">由国内开发者主导的开源观测平台，提供开箱即用的指标监控、告警、日志分析一体化能力。全中文界面，部署简单，社区活跃。<strong>已在国内 1000+ 企业生产环境部署</strong>。</div>
+            <div class="tag-row">
+              <span class="highlight-tag positive">✅ 全中文</span>
+              <span class="highlight-tag positive">✅ 1000+ 企业</span>
+              <span class="highlight-tag info">💡 信创验证</span>
+            </div>
+          </div>
+          <div class="project-item">
+            <div class="pi-head">
+              <div class="pi-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white;">S</div>
+              <div class="pi-name">SREWorks</div>
+            </div>
+            <div class="pi-desc">国内大厂开源的 SRE 工程化平台，覆盖从监控、告警、自动化运维到容量管理的完整 SRE 工具链，集成化程度高。</div>
+            <div class="tag-row">
+              <span class="highlight-tag positive">✅ 完整工具链</span>
+              <span class="highlight-tag info">💡 大厂开源</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="trend-card">
+        <h3>🏦 国产方案对银行的独特优势</h3>
+        <div class="triple-layout">
+          <div class="triple-card">
+            <h4>🗣️ 原生语言支持</h4>
+            <p>全中文界面、中文文档、中文社区。技术团队沟通无障碍，降低学习和运维门槛，特别适合以中文为主要工作语言的银行团队。</p>
+          </div>
+          <div class="triple-card">
+            <h4>📜 合规对齐</h4>
+            <p>国内开源项目更了解等保三级、PCI-DSS、银保监会监管要求，默认配置更贴合国内合规场景。已通过信创认证或可在国产操作系统上无缝运行。</p>
+          </div>
+          <div class="triple-card">
+            <h4>🤝 本地社区生态</h4>
+            <p>国内社区活跃，技术分享、Meetup、培训资源丰富。遇到问题可快速获得本地开发者和厂商的技术支持，响应速度快。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="data-callout warning">
+        <strong>🏛️ 政策驱动：信创与自主可控</strong><br>
+        《关键信息基础设施安全保护条例》《网络安全法》等法规明确要求银行核心 IT 系统的自主可控。信创采购目录中优先列出国产化软硬件，<strong>银行 IT 预算中国产化占比逐年提升</strong>。采用国产开源方案既是合规要求，也是战略选择。
+      </div>
+
+      <div class="data-callout highlight">
+        <strong>📊 采纳统计</strong><br>
+        夜莺（Nightingale）已在 <strong>1000+ 国内企业</strong>生产环境中部署，涵盖国有大行、股份制银行、城商行、农商行等各类金融机构。在信创环境（麒麟 OS、统信 UOS、达梦数据库等）中验证充分。
+      </div>
+    </section>
+
+    <section class="section" id="cost">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, rgba(245,158,11,0.15) 0%, rgba(234,88,12,0.15) 100%);">💰</div>
+        <h2>趋势五：成本优化成为核心驱动力</h2>
+        <span class="section-badge" style="background: rgba(245,158,11,0.1); color: var(--warning);">ROI 焦点</span>
+      </div>
+      <div class="section-intro">
+        <p>在银行业 IT 成本管控趋严的大背景下，<strong>成本优化</strong>正从 AIOps 的"附带收益"转变为<strong>核心驱动力</strong>。开源 AIOps 方案不仅在采购成本上具有显著优势，在存储、云计算等持续支出方面同样带来巨大的节省空间。</p>
+      </div>
+
+      <div class="trend-card">
+        <h3>💾 存储成本优化：OpenObserve 的革命性优势</h3>
+        <p>Elasticsearch 虽为日志分析的事实标准，但其<strong>高昂的存储成本</strong>一直是银行 IT 预算的沉重负担。<strong>OpenObserve</strong> 作为新兴的开源可观测性平台，在存储效率上实现了数量级的突破。</p>
+        <div class="data-callout highlight">
+          <strong>📊 存储成本对比</strong><br>
+          OpenObserve 相比 Elasticsearch 可实现 <strong>140 倍</strong> 的存储成本降低。这意味着同样存储 1TB 日志数据，使用 OpenObserve 仅需约 7GB 的存储空间。对日均产生数 TB 日志的银行而言，年度存储成本节省可达<strong>数百万元</strong>。
+        </div>
+        <div class="comparison-grid">
+          <div class="comparison-cell">
+            <div class="cc-label">存储引擎</div>
+            <div class="cc-value">RocksDB + 列式存储</div>
+          </div>
+          <div class="comparison-cell">
+            <div class="cc-label">数据压缩</div>
+            <div class="cc-value">Superior 压缩算法</div>
+          </div>
+          <div class="comparison-cell">
+            <div class="cc-label">查询性能</div>
+            <div class="cc-value">亚秒级响应</div>
+          </div>
+          <div class="comparison-cell best">
+            <div class="cc-label">总体 TCO</div>
+            <div class="cc-value">降低 95%+</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="trend-card">
+        <h3>☁️ 云资源成本优化</h3>
+        <p>eBPF 等零侵入技术不仅提升可观测性覆盖率，还能通过<strong>精准的资源使用分析</strong>，帮助银行识别云资源浪费。</p>
+        <div class="triple-layout">
+          <div class="triple-card">
+            <h4>🔍 精准资源画像</h4>
+            <p>eBPF 可实时采集每个进程的 CPU、内存、网络使用数据，帮助运维团队精准识别资源浪费点，消除僵尸进程和闲置资源。</p>
+          </div>
+          <div class="triple-card">
+            <h4>📊 容量规划优化</h4>
+            <p>基于实际负载数据进行容量规划，避免过度预留。某银行通过 eBPF 数据将云资源预留比例从 40% 优化至 15%。</p>
+          </div>
+          <div class="triple-card">
+            <h4>💰 成本归因分析</h4>
+            <p>按业务线、系统、部门精确分摊云资源成本，让每个业务单元都了解自身的 IT 开销，形成成本控制的良性循环。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="trend-card">
+        <h3>📈 银行 AIOps 投资 ROI 分析</h3>
+        <div class="callout-grid">
+          <div class="callout-stat">
+            <div class="cs-num">6<span class="cs-unit">个月</span></div>
+            <div class="cs-label">投资回收期（典型）</div>
+          </div>
+          <div class="callout-stat">
+            <div class="cs-num success">3<span class="cs-unit">x</span></div>
+            <div class="cs-label">年度投资回报率</div>
+          </div>
+          <div class="callout-stat">
+            <div class="cs-num warning">40<span class="cs-unit">%+</span></div>
+            <div class="cs-label">运维效率提升幅度</div>
+          </div>
+          <div class="callout-stat">
+            <div class="cs-num">50<span class="cs-unit">%+</span></div>
+            <div class="cs-label">MTTR 平均缩短</div>
+          </div>
+        </div>
+        <p style="margin-top: 16px; font-size: 0.85rem; color: var(--slate-600);">
+          综合多家银行实践数据，AIOps 投资的典型回报周期为 6 个月，年度投资回报率可达 3 倍。成本节省主要来自三个方面：存储成本降低（35%）、云资源优化（30%）、人力效率提升（35%）。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="roadmap">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, rgba(59,130,246,0.15) 0%, rgba(30,58,95,0.15) 100%);">🗺️</div>
+        <h2>趋势总结与展望：2026–2028 技术路线图</h2>
+        <span class="section-badge" style="background: rgba(16,185,129,0.1); color: var(--success);">行动指南</span>
+      </div>
+      <div class="section-intro">
+        <p>基于以上五大趋势分析，我们为银行 AI Ops 建设提出 <strong>2026–2028 三年技术路线图</strong>。建议采取分阶段、循序渐进的策略，从基础可观测性到完全自主运维，稳步推进智能化转型。</p>
+      </div>
+
+      <div class="roadmap-section">
+        <div class="roadmap-timeline">
+          <div class="roadmap-phase">
+            <div class="phase-header">
+              <div class="phase-number">1</div>
+              <div class="phase-title">短期（0–12 个月）：eBPF 可观测性普及</div>
+              <div class="phase-duration">2026</div>
+            </div>
+            <p class="phase-desc">将 eBPF 作为核心可观测性技术在全行范围推广，完成从传统 Agent 探针到 eBPF 的架构演进。同步建立基于 OpenTelemetry 的统一观测数据平台，引入 OpenObserve 优化存储成本。</p>
+            <div class="phase-deliverables">
+              <span class="deliverable-tag">✅ eBPF 全行推广</span>
+              <span class="deliverable-tag">✅ OpenTelemetry 统一平台</span>
+              <span class="deliverable-tag">✅ OpenObserve 存储降本</span>
+              <span class="deliverable-tag">✅ 告警体系升级</span>
+            </div>
+          </div>
+
+          <div class="roadmap-phase">
+            <div class="phase-header">
+              <div class="phase-number">2</div>
+              <div class="phase-title">中期（12–24 个月）：AI Agent 深度集成</div>
+              <div class="phase-duration">2026–2027</div>
+            </div>
+            <p class="phase-desc">引入 AI Agent 实现智能告警关联、自动化根因分析和智能故障排查。部署 HolmesGPT 等 AI 智能体，与 Keep 告警平台、现有 ITSM 系统深度集成，构建"AI 顾问 + 人工确认"的协作模式。</p>
+            <div class="phase-deliverables">
+              <span class="deliverable-tag">✅ AI 告警关联</span>
+              <span class="deliverable-tag">✅ 自动化 RCA</span>
+              <span class="deliverable-tag">✅ AI 运维助手</span>
+              <span class="deliverable-tag">✅ 安全沙箱部署</span>
+            </div>
+          </div>
+
+          <div class="roadmap-phase">
+            <div class="phase-header">
+              <div class="phase-number">3</div>
+              <div class="phase-title">长期（24+ 个月）：全自主自愈基础设施</div>
+              <div class="phase-duration">2027–2028</div>
+            </div>
+            <p class="phase-desc">迈向完全自主运维（AIOps 2.0），AI Agent 能够自动识别、诊断和修复大部分故障。构建金融级 BPMN/DMN 流程编排能力，实现从基础设施到业务应用的全栈自动化。最终目标：<strong>99% 的故障无需人工介入</strong>。</p>
+            <div class="phase-deliverables">
+              <span class="deliverable-tag">✅ 自主故障修复</span>
+              <span class="deliverable-tag">✅ 金融流程编排</span>
+              <span class="deliverable-tag">✅ 全栈自治</span>
+              <span class="deliverable-tag">✅ 信创生态完善</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="data-callout" style="margin-top: 24px;">
+        <strong>🎯 行动建议</strong><br>
+        1. <strong>立即启动</strong>：评估 eBPF 技术在本行的适用性，选择 1–2 个非核心系统进行试点验证<br>
+        2. <strong>短期规划</strong>：制定 12 个月 AIOps 建设规划，明确里程碑和 ROI 目标<br>
+        3. <strong>团队建设</strong>：培养兼具 Linux 内核、云原生、AI 能力的复合型 AIOps 团队<br>
+        4. <strong>生态合作</strong>：积极参与 CNCF、FINOS、国内开源社区，把握技术演进方向
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-links">
+      <a href="index.html">首页</a>
+      <a href="compare.html">项目对比</a>
+      <a href="recommendations.html">选型建议</a>
+      <a href="trends.html">趋势洞察</a>
+    </div>
+    <p class="footer-brand">银行 AI Ops 开源项目调研</p>
+    <p class="footer-meta">数据截至 2026年8月 | 本页面仅供参考，请以项目实际信息为准</p>
+  </div>
+</footer>
+
+<script>
+(function() {
+  const sections = document.querySelectorAll('.section');
+  const navLinks = document.querySelectorAll('.sidebar a.nav-link');
+
+  function onScroll() {
+    let current = '';
+    const scrollY = window.pageYOffset + 120;
+    sections.forEach(section => {
+      if (scrollY >= section.offsetTop) {
+        current = section.getAttribute('id');
+      }
+    });
+    if (current) {
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) {
+          link.classList.add('active');
+        }
+      });
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

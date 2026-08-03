@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>银行 AI Ops 选型建议</title>
+<style>
+:root {
+  --primary: #1e3a5f;
+  --primary-light: #2c5282;
+  --accent: #3b82f6;
+  --accent-light: #60a5fa;
+  --slate-50: #f8fafc;
+  --slate-100: #f1f5f9;
+  --slate-200: #e2e8f0;
+  --slate-300: #cbd5e1;
+  --slate-400: #94a3b8;
+  --slate-500: #64748b;
+  --slate-600: #475569;
+  --slate-700: #334155;
+  --slate-800: #1e293b;
+  --slate-900: #0f172a;
+  --success: #10b981;
+  --success-light: #d1fae5;
+  --warning: #f59e0b;
+  --warning-light: #fef3c7;
+  --danger: #ef4444;
+  --danger-light: #fee2e2;
+  --info: #0ea5e9;
+  --info-light: #e0f2fe;
+  --card-bg: #ffffff;
+  --card-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06);
+  --card-shadow-hover: 0 4px 12px rgba(0,0,0,0.08), 0 8px 32px rgba(30,58,95,0.12);
+  --radius: 12px;
+  --radius-lg: 16px;
+  --transition: cubic-bezier(0.4, 0, 0.2, 1);
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-sans);
+  background: linear-gradient(180deg, var(--slate-50) 0%, var(--slate-100) 100%);
+  color: var(--slate-800);
+  line-height: 1.7;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  font-size: 0.95rem;
+}
+.container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 32px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.sidebar {
+  position: sticky;
+  top: 24px;
+  align-self: start;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  padding: 20px;
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--slate-100);
+}
+.sidebar h3 {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--slate-400);
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--slate-100);
+}
+.sidebar nav { display: flex; flex-direction: column; gap: 2px; }
+.sidebar a {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: var(--slate-600);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s var(--transition);
+  border-left: 3px solid transparent;
+}
+.sidebar a:hover {
+  background: var(--slate-50);
+  color: var(--accent);
+  border-left-color: var(--accent-light);
+}
+.sidebar a.active {
+  background: linear-gradient(90deg, rgba(59,130,246,0.08) 0%, transparent 100%);
+  color: var(--primary);
+  border-left-color: var(--accent);
+  font-weight: 600;
+}
+.sidebar a.sub-nav {
+  padding-left: 28px;
+  font-size: 0.8rem;
+  color: var(--slate-500);
+}
+.main-content { min-width: 0; }
+.page-header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: white;
+  padding: 56px 0 44px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+.top-nav {
+  position: absolute;
+  top: 20px;
+  right: 32px;
+  z-index: 10;
+  display: flex;
+  gap: 6px;
+}
+.top-nav a {
+  color: rgba(255,255,255,0.85);
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.2s var(--transition);
+  white-space: nowrap;
+}
+.top-nav a:hover {
+  background: rgba(255,255,255,0.15);
+  color: white;
+}
+.top-nav a.active {
+  background: rgba(255,255,255,0.2);
+  color: white;
+  font-weight: 600;
+}
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.5;
+}
+.page-header-content { position: relative; z-index: 1; }
+.page-header h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 10px;
+}
+.page-header .subtitle {
+  font-size: 1.05rem;
+  opacity: 0.9;
+  max-width: 680px;
+  line-height: 1.6;
+}
+.page-header .meta-info {
+  display: flex;
+  gap: 24px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+.page-header .meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  opacity: 0.85;
+}
+.section { margin-bottom: 48px; }
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--slate-100);
+}
+.section-header .section-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+.section-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: -0.01em;
+}
+.section-header .section-badge {
+  font-size: 0.75rem;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  margin-left: auto;
+}
+.section-intro {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--slate-100);
+  margin-bottom: 20px;
+  color: var(--slate-700);
+  font-size: 0.9rem;
+  line-height: 1.75;
+}
+.section-intro p + p { margin-top: 10px; }
+.principles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.principle-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--slate-100);
+  transition: all 0.25s var(--transition);
+}
+.principle-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--card-shadow-hover);
+}
+.principle-card .p-icon { font-size: 1.5rem; margin-bottom: 8px; }
+.principle-card h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 6px;
+}
+.principle-card p { font-size: 0.85rem; color: var(--slate-600); line-height: 1.6; }
+.option-list { display: flex; flex-direction: column; gap: 16px; }
+.option-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--slate-100);
+  transition: all 0.25s var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.option-card:hover {
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-1px);
+}
+.option-card.primary-option { border-left: 4px solid var(--success); }
+.option-card.alternative-option { border-left: 4px solid var(--accent); }
+.option-card.special-option { border-left: 4px solid #8b5cf6; }
+.option-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.option-logo {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.95rem; color: white; flex-shrink: 0;
+}
+.option-name { font-size: 1.1rem; font-weight: 700; color: var(--slate-900); }
+.option-tagline { font-size: 0.82rem; color: var(--slate-500); margin-top: 2px; }
+.option-body { font-size: 0.88rem; color: var(--slate-700); line-height: 1.65; }
+.option-body p + p { margin-top: 10px; }
+.option-body strong { color: var(--primary); font-weight: 600; }
+.option-features { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.highlight-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px;
+  background: var(--slate-50);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  color: var(--slate-700);
+  border: 1px solid var(--slate-100);
+  font-weight: 500;
+}
+.highlight-tag.positive { background: var(--success-light); color: #059669; border-color: #a7f3d0; }
+.highlight-tag.info { background: var(--info-light); color: #0284c7; border-color: #bae6fd; }
+.highlight-tag.warning { background: var(--warning-light); color: #d97706; border-color: #fde68a; }
+.option-usecase {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, rgba(30,58,95,0.03) 0%, rgba(59,130,246,0.03) 100%);
+  border-radius: 10px;
+  border: 1px solid var(--slate-100);
+  font-size: 0.83rem;
+  color: var(--slate-700);
+  line-height: 1.6;
+}
+.option-usecase strong { color: var(--primary); }
+.option-usecase ul { margin-top: 6px; padding-left: 18px; line-height: 1.7; }
+.rec-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.rec-badge.primary { background: var(--success); color: white; box-shadow: 0 2px 8px rgba(16,185,129,0.3); }
+.rec-badge.alternative { background: var(--accent); color: white; box-shadow: 0 2px 8px rgba(59,130,246,0.3); }
+.rec-badge.specialized { background: #8b5cf6; color: white; box-shadow: 0 2px 8px rgba(139,92,246,0.3); }
+.rec-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--slate-200), transparent);
+  margin: 20px 0;
+}
+.comparison-table-wrap { overflow-x: auto; margin-top: 16px; }
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  background: white;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+}
+.comparison-table thead {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: white;
+}
+.comparison-table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+.comparison-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--slate-100);
+  color: var(--slate-700);
+  font-size: 0.83rem;
+}
+.comparison-table tbody tr:hover { background: var(--slate-50); }
+.comparison-table tbody tr:last-child td { border-bottom: none; }
+.comparison-table .best-value { background: var(--success-light); color: #065f46; font-weight: 600; }
+.domestic-section {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--slate-100);
+  margin-bottom: 24px;
+}
+.domestic-section h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.domestic-item {
+  padding: 14px 16px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  border: 1px solid var(--slate-100);
+}
+.domestic-item:last-child { margin-bottom: 0; }
+.domestic-item.highlight-bg {
+  background: linear-gradient(135deg, rgba(245,158,11,0.04) 0%, rgba(239,68,68,0.03) 100%);
+  border-color: rgba(245,158,11,0.2);
+}
+.domestic-item h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.domestic-item p { font-size: 0.85rem; color: var(--slate-600); line-height: 1.6; }
+.domestic-recommend-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+.domestic-recommend-item {
+  padding: 12px 14px;
+  background: linear-gradient(135deg, rgba(16,185,129,0.05) 0%, rgba(59,130,246,0.04) 100%);
+  border-radius: 10px;
+  border: 1px solid rgba(16,185,129,0.15);
+  font-size: 0.85rem;
+  color: var(--slate-700);
+}
+.domestic-recommend-item strong { color: var(--primary); }
+.roadmap-section {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--slate-100);
+}
+.roadmap-timeline { position: relative; padding-left: 32px; }
+.roadmap-timeline::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  background: linear-gradient(180deg, var(--accent) 0%, var(--primary-light) 100%);
+  border-radius: 2px;
+}
+.roadmap-phase {
+  position: relative;
+  margin-bottom: 28px;
+  padding: 16px 18px;
+  background: var(--slate-50);
+  border-radius: 12px;
+  border: 1px solid var(--slate-100);
+  transition: all 0.25s var(--transition);
+}
+.roadmap-phase:hover { background: white; box-shadow: var(--card-shadow-hover); }
+.roadmap-phase::before {
+  content: '';
+  position: absolute;
+  left: -26px;
+  top: 18px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid var(--accent);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+}
+.phase-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.phase-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--primary-light) 100%);
+  color: white; font-weight: 700; font-size: 0.85rem;
+}
+.phase-title { font-size: 1.05rem; font-weight: 700; color: var(--primary); }
+.phase-duration {
+  font-size: 0.78rem;
+  color: var(--slate-500);
+  background: var(--slate-200);
+  padding: 2px 10px;
+  border-radius: 999px;
+  margin-left: auto;
+  font-weight: 600;
+}
+.phase-desc { font-size: 0.88rem; color: var(--slate-700); line-height: 1.65; margin-bottom: 12px; }
+.phase-deliverables { display: flex; flex-wrap: wrap; gap: 6px; }
+.deliverable-tag {
+  padding: 4px 10px;
+  background: white;
+  border: 1px solid var(--slate-200);
+  border-radius: 6px;
+  font-size: 0.78rem;
+  color: var(--slate-700);
+  font-weight: 500;
+}
+.risk-section {
+  background: linear-gradient(135deg, rgba(239,68,68,0.04) 0%, rgba(245,158,11,0.04) 100%);
+  border: 1px solid rgba(239,68,68,0.15);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 32px;
+}
+.risk-section h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--danger);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.risk-item {
+  padding: 12px 14px;
+  background: white;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  border-left: 3px solid var(--warning);
+  font-size: 0.85rem;
+  color: var(--slate-700);
+  line-height: 1.6;
+}
+.risk-item:last-child { margin-bottom: 0; border-left-color: var(--danger); }
+.risk-item strong { color: var(--primary); }
+.footer {
+  text-align: center;
+  padding: 32px 20px;
+  color: var(--slate-400);
+  font-size: 0.85rem;
+  border-top: 1px solid var(--slate-100);
+  background: white;
+  margin-top: 40px;
+}
+.footer .footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.footer .footer-links a {
+  color: var(--slate-500);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.2s var(--transition);
+}
+.footer .footer-links a:hover {
+  color: var(--accent);
+}
+.footer .footer-brand {
+  font-weight: 600;
+  color: var(--slate-600);
+  margin-bottom: 4px;
+}
+.footer .footer-meta {
+  font-size: 0.8rem;
+  color: var(--slate-400);
+}
+.toc-mobile { display: none; }
+@media (max-width: 1024px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .toc-mobile { display: block; margin-bottom: 24px; }
+  .toc-mobile select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--slate-200);
+    border-radius: 10px;
+    font-size: 0.88rem;
+    background: white;
+    color: var(--slate-700);
+    font-family: var(--font-sans);
+  }
+  .page-header h1 { font-size: 1.7rem; }
+}
+@media (max-width: 768px) {
+  .page-header { padding: 40px 0 32px; }
+  .page-header h1 { font-size: 1.5rem; }
+  .page-header .subtitle { font-size: 0.92rem; }
+  .top-nav { top: 12px; right: 12px; gap: 2px; flex-wrap: wrap; }
+  .top-nav a { padding: 6px 10px; font-size: 0.78rem; }
+  .section-header h2 { font-size: 1.25rem; }
+  .recommendation-block,
+  .option-card,
+  .domestic-section,
+  .roadmap-section { padding: 18px; }
+  .container, .layout { padding: 0 16px; }
+  .comparison-table { font-size: 0.78rem; }
+  .comparison-table th, .comparison-table td { padding: 10px 12px; }
+}
+@media print {
+  body { background: white; font-size: 11pt; }
+  .sidebar, .toc-mobile, .page-header::before { display: none !important; }
+  .page-header {
+    background: var(--primary) !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    padding: 24px 0;
+  }
+  .layout { display: block; max-width: 100%; padding: 0; }
+  .container { max-width: 100%; padding: 0; }
+  .recommendation-block,
+  .option-card,
+  .domestic-section,
+  .roadmap-section,
+  .risk-section,
+  .principle-card {
+    box-shadow: none;
+    break-inside: avoid;
+    border: 1px solid var(--slate-300);
+  }
+  .section { break-before: page; }
+  .section:first-of-type { break-before: auto; }
+  .footer { border-top: 1px solid var(--slate-300); }
+}
+::selection { background: rgba(59,130,246,0.2); }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--slate-100); }
+::-webkit-scrollbar-thumb { background: var(--slate-300); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--slate-400); }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <nav class="top-nav">
+    <a href="index.html">首页</a>
+    <a href="compare.html">项目对比</a>
+    <a href="recommendations.html" class="active">选型建议</a>
+    <a href="trends.html">趋势洞察</a>
+  </nav>
+  <div class="container page-header-content">
+    <h1>银行 AI Ops 选型建议</h1>
+    <p class="subtitle">基于银行行业核心需求，从可观测性、告警管理、AI 智能体、流程编排等维度，为金融机构提供开源 AIOps 技术栈选型指导</p>
+    <div class="meta-info">
+      <div class="meta-item"><span>📅</span>数据截至：2026 年 8 月</div>
+      <div class="meta-item"><span>🏦</span>面向国内银行</div>
+      <div class="meta-item"><span>🔓</span>精选开源方案</div>
+    </div>
+  </div>
+</header>
+
+<div class="toc-mobile">
+  <select onchange="location.hash = this.value">
+    <option value="">—— 快速跳转 ——</option>
+    <option value="principles">选型原则说明</option>
+    <option value="observability">基础可观测性层</option>
+    <option value="alerting">告警管理层</option>
+    <option value="ai-agent">AI 智能体层</option>
+    <option value="workflow">金融流程编排层</option>
+    <option value="log-analysis">日志分析专项</option>
+    <option value="domestic">国内银行特殊考虑</option>
+    <option value="roadmap">实施路线图建议</option>
+    <option value="risk">风险提示</option>
+  </select>
+</div>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <h3>📋 目录导航</h3>
+    <nav>
+      <a href="#principles" class="nav-link">🎯 选型原则说明</a>
+      <a href="#observability" class="nav-link">📊 基础可观测性层</a>
+      <a href="#alerting" class="nav-link">🔔 告警管理层</a>
+      <a href="#ai-agent" class="nav-link">🤖 AI 智能体层</a>
+      <a href="#workflow" class="nav-link">🔀 金融流程编排层</a>
+      <a href="#log-analysis" class="nav-link">📝 日志分析专项</a>
+      <a href="#domestic" class="nav-link">🇨🇳 国内银行特殊考虑</a>
+      <a href="#roadmap" class="nav-link">🗺️ 实施路线图建议</a>
+      <a href="#risk" class="nav-link">⚠️ 风险提示</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+
+    <!-- 选型原则 -->
+    <section class="section" id="principles">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, rgba(59,130,246,0.15) 0%, rgba(30,58,95,0.15) 100%);">🎯</div>
+        <h2>选型原则说明</h2>
+      </div>
+      <div class="section-intro">
+        <p>本选型建议基于银行行业的独特需求制定，综合考量<strong>监管合规、系统稳定性、安全性、可扩展性</strong>四大核心维度。我们推荐的每一项技术均经过严格筛选，确保在金融级场景下的可靠性。</p>
+      </div>
+      <div class="principles-grid">
+        <div class="principle-card">
+          <div class="p-icon">🏛️</div>
+          <h4>合规优先</h4>
+          <p>所有推荐方案均支持私有化部署，满足银保监会、人民银行等监管机构对数据安全和信息安全的合规要求，支持等保三级及以上标准。</p>
+        </div>
+        <div class="principle-card">
+          <div class="p-icon">🔒</div>
+          <h4>安全可控</h4>
+          <p>优先选择具备只读模式、权限分级、审计日志等安全特性的工具。AI 智能体必须支持沙箱隔离，杜绝未经授权的生产操作。</p>
+        </div>
+        <div class="principle-card">
+          <div class="p-icon">📈</div>
+          <h4>稳定可靠</h4>
+          <p>所选项目需在业界有大规模生产验证，具备高可用性（HA）集群支持，能处理银行日均千万级交易量的监控与分析需求。</p>
+        </div>
+        <div class="principle-card">
+          <div class="p-icon">🧩</div>
+          <h4>开放生态</h4>
+          <p>优先采用开放标准协议（OpenTelemetry、PromQL、BPMN 等），确保与现有 IT 基础设施（如 Zabbix、ELK、Jenkins）的无缝集成。</p>
+        </div>
+        <div class="principle-card">
+          <div class="p-icon">🇨🇳</div>
+          <h4>中文友好</h4>
+          <p>充分考虑国内银行技术团队的实际情况，优先推荐具备中文文档、中文社区支持、国产化兼容的项目，降低实施门槛。</p>
+        </div>
+        <div class="principle-card">
+          <div class="p-icon">💰</div>
+          <h4>成本可控</h4>
+          <p>采用开源方案以降低采购成本，同时评估长期运维投入。优先选择社区活跃、商业支持可选的项目，避免技术锁定风险。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 基础可观测性层 -->
+    <section class="section" id="observability">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, rgba(59,130,246,0.15) 0%, rgba(30,58,95,0.15) 100%);">📊</div>
+        <h2>基础可观测性层</h2>
+        <span class="section-badge" style="background: rgba(59,130,246,0.1); color: var(--accent);">核心推荐</span>
+      </div>
+      <div class="section-intro">
+        <p>可观测性是 AI Ops 的基石。银行 IT 系统通常涉及大量异构技术栈（主机、分布式、微服务），传统监控工具面临<strong>盲区多、侵入性强、关联分析弱</strong>等挑战。以下推荐组合方案，构建覆盖指标、链路、日志的全方位可观测体系。</p>
+      </div>
+
+      <div class="option-list">
+
+        <div class="option-card primary-option">
+          <div class="option-head">
+            <div class="option-logo" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">CR</div>
+            <div>
+              <div class="option-name">Coroot + SigNoz</div>
+              <div class="option-tagline">eBPF 零侵入探针 · OpenTelemetry 全栈追踪</div>
+            </div>
+            <span class="rec-badge primary" style="margin-left: auto;">⭐ 首选推荐</span>
+          </div>
+          <div class="option-body">
+            <p><strong>Coroot</strong> 基于 eBPF 内核级技术，实现<strong>零代码侵入</strong>的全栈可观测。无需在应用中埋点，即可自动发现服务拓扑、识别系统依赖（MySQL、Redis、Kafka 等），特别适合银行大量遗留系统的快速接入。</p>
+            <p><strong>SigNoz</strong> 提供与 OpenTelemetry 无缝兼容的指标、追踪、日志统一分析平台，支持基于 ClickHouse 的高效存储，查询性能优于传统 Elasticsearch。</p>
+          </div>
+          <div class="option-features">
+            <span class="highlight-tag positive">✅ eBPF 零侵入</span>
+            <span class="highlight-tag positive">✅ OpenTelemetry 标准</span>
+            <span class="highlight-tag positive">✅ 自动服务拓扑发现</span>
+            <span class="highlight-tag info">💡 ClickHouse 存储</span>
+            <span class="highlight-tag info">💡 支持 Kubernetes</span>
+          </div>
+          <div class="option-usecase">
+            <strong>🏦 银行典型场景：</strong>适用于银行核心系统、渠道系统、支付系统等多技术栈环境的快速可观测性建设，尤其适合对<strong>代码侵入性要求极高</strong>的生产环境。
+          </div>
+        </div>
+
+        <div class="option-card alternative-option">
+          <div class="option-head">
+            <div class="option-logo" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">NY</div>
+            <div>
+              <div class="option-name">夜莺 Nightingale</div>
+              <div class="option-tagline">国产开源 · 一体化观测平台</div>
+            </div>
+            <span class="rec-badge alternative" style="margin-left: auto;">🔄 备选方案</span>
+          </div>
+          <div class="option-body">
+            <p>夜莺是由国内开发者主导的开源观测平台，提供<strong>开箱即用</strong>的指标监控、告警、日志分析能力。它内置了对 Prometheus、VictoriaMetrics、Loki 的原生支持，界面全中文，部署简单，非常适合国内银行团队快速上手。</p>
+            <p>相比海外方案，夜莺在<strong>中文社区、文档、运维习惯</strong>方面具有天然优势，且已在多家国内大型企业生产环境中验证。</p>
+          </div>
+          <div class="option-features">
+            <span class="highlight-tag positive">✅ 全中文界面</span>
+            <span class="highlight-tag positive">✅ 一体化设计</span>
+            <span class="highlight-tag positive">✅ 快速部署</span>
+            <span class="highlight-tag info">💡 国内社区活跃</span>
+            <span class="highlight-tag info">💡 预置监控模板丰富</span>
+          </div>
+          <div class="option-usecase">
+            <strong>🏦 银行典型场景：</strong>适合中小规模银行或农商行快速搭建观测平台，技术团队以中文为主要工作语言，希望降低学习和运维门槛。
+          </div>
+        </div>
+
+        <div class="option-card special-option">
+          <div class="option-head">
+            <div class="option-logo" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">SK</div>
+            <div>
+              <div class="option-name">SkyWalking</div>
+              <div class="option-tagline">Java 微服务首选 · 分布式追踪 APM</div>
+            </div>
+            <span class="rec-badge specialized" style="margin-left: auto;">🎯 专项方案</span>
+          </div>
+          <div class="option-body">
+            <p>SkyWalking 是 Apache 基金会顶级项目，专为<strong>Java 微服务架构</strong>设计。通过 Java Agent 字节码增强技术，实现对 Spring Cloud、Dubbo、gRPC 等主流框架的无侵入式性能追踪。</p>
+            <p>如果银行核心系统以 Java/分布式架构为主（如基于 Spring Cloud 或 Dubbo），SkyWalking 是首选的 APM 解决方案，提供业界领先的<strong>分布式链路追踪</strong>和<strong>拓扑图分析</strong>能力。</p>
+          </div>
+          <div class="option-features">
+            <span class="highlight-tag positive">✅ Java Agent 无侵入</span>
+            <span class="highlight-tag positive">✅ 分布式追踪</span>
+            <span class="highlight-tag positive">✅ 拓扑自动发现</span>
+            <span class="highlight-tag info">💡 支持多种存储后端</span>
+            <span class="highlight-tag info">💡 社区成熟稳定</span>
+          </div>
+          <div class="option-usecase">
+            <strong>🏦 银行典型场景：</strong>适用于 Java 技术栈为主的银行，尤其是采用 Spring Cloud、Dubbo 等分布式架构的大型银行，需要深度分析服务调用链路和性能瓶颈。
+          </div>
+        </div>
+
+      </div>
+
+      <div class="rec-divider"></div>
+
+      <div class="comparison-table-wrap">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>对比维度</th>
+              <th>Coroot + SigNoz</th>
+              <th>夜莺 Nightingale</th>
+              <th>SkyWalking</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>探针侵入性</strong></td>
+              <td class="best-value">eBPF 零侵入</td>
+              <td>需 Agent 或 Exporter</td>
+              <td>Java Agent 字节码</td>
+            </tr>
+            <tr>
+              <td><strong>部署复杂度</strong></td>
+              <td>中等</td>
+              <td class="best-value">低（开箱即用）</td>
+              <td>中等</td>
+            </tr>
+            <tr>
+              <td><strong>中文支持</strong></td>
+              <td>部分</td>
+              <td class="best-value">原生中文</td>
+              <td>部分</td>
+            </tr>
+            <tr>
+              <td><strong>存储引擎</strong></td>
+              <td class="best-value">ClickHouse</td>
+              <td>VictoriaMetrics / Loki</td>
+              <td>ElasticSearch / BanyanDB</td>
+            </tr>
+            <tr>
+              <td><strong>适用场景</strong></td>
+              <td class="best-value">多技术栈、遗留系统</td>
+              <td>快速部署、中文团队</td>
+              <td>Java 微服务</td>
+            </tr>
+            <tr>
+              <td><strong>社区活跃度</strong></td>
+              <td>高（海外活跃）</td>
+              <td class="best-value">高（国内活跃）</td>
+              <td>极高（Apache 顶级）</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 告警管理层 -->
+    <section class="section" id="alerting">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, rgba(245,158,11,0.15) 0%, rgba(234,88,12,0.15) 100%);">🔔</div>
+        <h2>告警管理层</h2>
+        <span class="section-badge" style="background: rgba(245,158,11,0.1); color: var(--warning);">关键能力</span>
+      </div>
+      <div class="section-intro">
+        <p>银行 IT 运维面临的最大挑战之一是<strong>告警风暴</strong>。核心系统、渠道系统、外围系统之间关联复杂，一次数据库抖动可能触发数百条告警。有效的告警管理需要实现<strong>告警降噪、根因关联、智能分级</strong>。</p>
+      </div>
+
+      <div class="option-list">
+
+        <div class="option-card primary-option">
+          <div class="option-head">
+            <div class="option-logo" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">KP</div>
+            <div>
+              <div class="option-name">Keep</div>
+              <div class="option-tagline">AI 驱动的告警聚合与关联平台 · 110+ 集成</div>
+            </div>
+            <span class="rec-badge primary" style="margin-left: auto;">⭐ 首选推荐</span>
+          </div>
+          <div class="option-body">
+            <p>Keep 是一款 AI 驱动的告警管理平台，核心能力是<strong>通过语义理解和时间窗口聚合</strong>，将海量告警自动关联为可操作的 Incident。它支持 110+ 工具的告警接入，包括 Prometheus、Grafana、Datadog、Zabbix、云厂商监控等。</p>
+            <p>在银行场景中，Keep 可以将"数据库 CPU 高 → 应用响应慢 → 交易超时 → 渠道失败"这条链路的告警<strong>智能合并为一个 Incident</strong>，并自动推荐排查路径，大幅降低运维人员的认知负担。</p>
+          </div>
+          <div class="option-features">
+            <span class="highlight-tag positive">✅ AI 告警关联</span>
+            <span class="highlight-tag positive">✅ 110+ 工具集成</span>
+            <span class="highlight-tag positive">✅ 自动 Incident 聚合</span>
+            <span class="highlight-tag info">💡 支持 Webhook</span>
+            <span class="highlight-tag info">💡 灵活路由规则</span>
+          </div>
+          <div class="option-usecase">
+            <strong>🏦 银行典型场景：</strong>核心系统告警风暴治理、跨系统故障根因分析、7×24 运维值班智能化。预计可将告警数量减少 <strong>70%–90%</strong>，平均故障响应时间缩短 <strong>40%+</strong>。
+          </div>
+        </div>
+
+        <div class="option-card alternative-option">
+          <div class="option-head">
+            <div class="option-logo" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">NY</div>
+            <div>
+              <div class="option-name">夜莺（内置告警模块）</div>
+              <div class="option-tagline">与可观测性平台一体化的告警方案</div>
+            </div>
+            <span class="rec-badge alternative" style="margin-left: auto;">🔄 备选方案</span>
+          </div>
+          <div class="option-body">
+            <p>夜莺内置了功能完善的告警管理模块，支持<strong>告警分级、告警抑制、告警聚合、静默周期</strong>等核心能力。与指标监控、日志分析的紧密集成，使得从告警触发到根因排查的路径非常顺畅。</p>
+            <p>对于已选择夜莺作为可观测性平台的银行，无需额外引入独立告警系统即可满足日常告警管理需求，减少运维组件数量。</p>
+          </div>
+          <div class="option-features">
+            <span class="highlight-tag positive">✅ 与观测一体化</span>
+            <span class="highlight-tag positive">✅ 告警分级管理</span>
+            <span class="highlight-tag positive">✅ 告警抑制与聚合</span>
+            <span class="highlight-tag info">💡 多种通知渠道</span>
+          </div>
+          <div class="option-usecase">
+            <strong>🏦 银行典型场景：</strong>中小规模银行，告警数量在可控范围（日均千条以内），希望以最小组件数量完成观测与告警闭环。
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- AI 智能体层 -->
+    <section class="section" id="ai-agent">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, rgba(236,72,153,0.15) 0%, rgba(219,39,119,0.15) 100%);">🤖</div>
+        <h2>AI 智能体层</h2>
+        <span class="section-badge" style="background: rgba(236,72,153,0.1); color: #ec4899;">前沿探索</span>
+      </div>
+      <div class="section-intro">
+        <p>AI 智能体是 AIOps 的核心能力，能够<strong>自动执行根因分析、故障排查、报告生成</strong>等高级任务。银行对 AI 智能体的核心要求是<strong>安全可控</strong>——必须在只读沙箱中运行，严禁直接操作生产系统。</p>
+      </div>
+
+      <div class="option-list">
+
+        <div class="option-card primary-option">
+          <div class="option-head">
+            <div class="option-logo" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">HG</div>
+            <div>
+              <div class="option-name">HolmesGPT</div>
+              <div class="option-tagline">CNCF 沙箱项目 · 只读安全设计</div>
+            </div>
+            <span class="rec-badge primary" style="margin-left: auto;">⭐ 首选推荐</span>
+          </div>
+          <div class="option-body">
+            <p>HolmesGPT 是 CNCF 沙箱级项目，以<strong>"安全优先"</strong>为设计理念。它运行在只读沙箱环境中，所有操作均需经过严格审批，<strong>绝对禁止对生产系统进行写入操作</strong>，这一设计理念完美契合银行的安全合规要求。</p>
+            <p>核心能力包括：<strong>自动化根因分析（RCA）</strong>——当异常发生时自动拉取指标、日志、链路数据进行分析；<strong>智能故障排查</strong>——基于历史案例和知识库提供排查建议；<strong>自然语言交互</strong>——运维人员可用自然语言查询系统状态。</p>
+          </div>
+          <div class="option-features">
+            <span class="highlight-tag positive">✅ CNCF 沙箱项目</span>
+            <span class="highlight-tag positive">✅ 只读安全设计</span>
+            <span class="highlight-tag positive">✅ 自动化 RCA</span>
+            <span class="highlight-tag info">💡 自然语言交互</span>
+            <span class="highlight-tag info">💡 支持多模型</span>
+          </div>
+          <div class="option-usecase">
+            <strong>🏦 银行典型场景：</strong>核心交易系统故障根因分析、支付渠道异常自动排查、批量作业失败的智能诊断、运维知识问答助手。可将<strong>平均故障定位时间缩短 60%+</strong>。
+          </div>
+        </div>
+
+        <div class="option-card alternative-option">
+          <div class="option-head">
+            <div class="option-logo" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">MA</div>
+            <div>
+              <div class="option-name">Microsoft AIOpsLab</div>
+              <div class="option-tagline">企业级 AI Agent 构建框架</div>
+            </div>
+            <span class="rec-badge alternative" style="margin-left: auto;">🔄 备选方案</span>
+          </div>
+          <div class="option-body">
+            <p>AIOpsLab 是微软开源的 AI Agent 构建框架，提供了丰富的工具链和<strong>预定义的 AIOps 技能集</strong>。银行可以基于此框架构建符合自身需求的定制化智能体，集成内部知识库和运维流程。</p>
+            <p>它的优势在于<strong>高度可定制</strong>，支持与企业内部系统（ServiceNow、Jira、Confluence）的深度集成，适合有较强研发能力的银行进行二次开发。</p>
+          </div>
+          <div class="option-features">
+            <span class="highlight-tag positive">✅ 微软开源</span>
+            <span class="highlight-tag positive">✅ 丰富技能集</span>
+            <span class="highlight-tag positive">✅ 高度可定制</span>
+            <span class="highlight-tag info">💡 企业系统集成</span>
+          </div>
+          <div class="option-usecase">
+            <strong>🏦 银行典型场景：</strong>需要深度定制 AI 智能体的大型银行，希望将 AI 能力与内部 ITSM、知识库、变更管理系统深度整合。需要较强的研发团队支持。
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 金融流程编排层 -->
+    <section class="section" id="workflow">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, rgba(16,185,129,0.15) 0%, rgba(5,150,105,0.15) 100%);">🔀</div>
+        <h2>金融流程编排层</h2>
+        <span class="section-badge" style="background: rgba(16,185,129,0.1); color: var(--success);">业务赋能</span>
+      </div>
+      <div class="section-intro">
+        <p>银行的核心业务流程（支付处理、风险审批、合规报告）需要<strong>可靠、可审计、可编排</strong>的流程引擎。传统 BPM 系统（如 Camunda、Activiti）虽功能强大，但部署和维护成本高。以下推荐轻量级、云原生的 BPMN/DMN 方案。</p>
+      </div>
+
+      <div class="option-list">
+
+        <div class="option-card primary-option">
+          <div class="option-head">
+            <div class="option-logo" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">FX</div>
+            <div>
+              <div class="option-name">Fluxnova</div>
+              <div class="option-tagline">FINOS 治理 · 银行级 BPMN/DMN 编排引擎</div>
+            </div>
+            <span class="rec-badge primary" style="margin-left: auto;">⭐ 首选推荐</span>
+          </div>
+          <div class="option-body">
+            <p>Fluxnova 是由 <strong>FINOS（金融技术开放标准组织）</strong>治理的开源流程编排引擎，专为金融行业设计。它实现了 BPMN 2.0 和 DMN 1.4 标准，能够处理<strong>复杂的金融业务流程</strong>，包括支付清算、风险审批、合规报告、反洗钱筛查等。</p>
+            <p>相比通用 BPM 工具，Fluxnova 的优势在于<strong>金融领域的专业性</strong>——内置金融行业流程模板、合规审计日志、事务一致性保障，且具备轻量化的部署特性，可嵌入现有微服务架构。</p>
+          </div>
+          <div class="option-features">
+            <span class="highlight-tag positive">✅ FINOS 金融治理</span>
+            <span class="highlight-tag positive">✅ BPMN 2.0 / DMN 1.4</span>
+            <span class="highlight-tag positive">✅ 事务一致性保障</span>
+            <span class="highlight-tag info">💡 金融流程模板</span>
+            <span class="highlight-tag info">💡 审计日志完备</span>
+          </div>
+          <div class="option-usecase">
+            <strong>🏦 银行典型场景：</strong>
+            <ul>
+              <li><strong>支付处理：</strong>大额支付、跨境汇款的流程编排与路由</li>
+              <li><strong>风险审批：</strong>信贷审批、限额管理的多节点决策流程</li>
+              <li><strong>合规报告：</strong>监管报送、反洗钱筛查的自动化流程</li>
+              <li><strong>运营流程：</strong>开户、变更、销户等柜面业务流程标准化</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 日志分析专项 -->
+    <section class="section" id="log-analysis">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, rgba(139,92,246,0.15) 0%, rgba(124,58,237,0.15) 100%);">📝</div>
+        <h2>日志分析专项</h2>
+        <span class="section-badge" style="background: rgba(139,92,246,0.1); color: #8b5cf6;">深度分析</span>
+      </div>
+      <div class="section-intro">
+        <p>日志是故障排查的"黑匣子"。银行系统日均产生<strong>数 TB 级日志</strong>，传统关键字检索效率低下。智能日志分析需要实现<strong>异常检测、模式提取、模板挖掘</strong>三大核心能力。</p>
+      </div>
+
+      <div class="option-list">
+
+        <div class="option-card primary-option">
+          <div class="option-head">
+            <div class="option-logo" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">LD</div>
+            <div>
+              <div class="option-name">Loglizer + Drain3</div>
+              <div class="option-tagline">日志异常检测 + 模板挖掘黄金组合</div>
+            </div>
+            <span class="rec-badge primary" style="margin-left: auto;">⭐ 首选推荐</span>
+          </div>
+          <div class="option-body">
+            <p><strong>Loglizer</strong> 是业界领先的日志异常检测工具，通过<strong>无监督机器学习</strong>自动学习正常日志模式，实时识别异常行为。无需人工标注，即可检测出系统故障、入侵攻击、数据异常等场景。</p>
+            <p><strong>Drain3</strong> 是高效的日志模板挖掘工具，能够从海量日志中自动提取<strong>结构化模板</strong>，将非结构化日志转化为可分析的结构化数据，日志压缩率可达 <strong>90%+</strong>。</p>
+            <p>两者结合使用，可在 ELK/Loki 日志栈之上构建<strong>智能日志分析层</strong>，实现从被动检索到主动发现的升级。</p>
+          </div>
+          <div class="option-features">
+            <span class="highlight-tag positive">✅ 无监督异常检测</span>
+            <span class="highlight-tag positive">✅ 日志模板自动挖掘</span>
+            <span class="highlight-tag positive">✅ 90%+ 压缩率</span>
+            <span class="highlight-tag info">💡 兼容 ELK/Loki</span>
+            <span class="highlight-tag info">💡 支持增量学习</span>
+          </div>
+          <div class="option-usecase">
+            <strong>🏦 银行典型场景：</strong>核心系统日志异常实时监测、批量作业失败原因快速定位、安全事件日志溯源分析、日志归档压缩降本。
+          </div>
+        </div>
+
+      </div>
+
+      <div class="rec-divider"></div>
+
+      <div class="recommendation-block" style="border-left: 4px solid var(--info); background: white; border-radius: var(--radius-lg); padding: 22px; box-shadow: var(--card-shadow); border: 1px solid var(--slate-100);">
+        <h3 style="font-size: 1rem; font-weight: 700; color: var(--primary); margin-bottom: 12px;">🔗 与现有日志栈集成建议</h3>
+        <p style="font-size: 0.88rem; color: var(--slate-700); line-height: 1.7; margin-bottom: 12px;">
+          Loglizer 和 Drain3 以<strong>旁路部署</strong>方式集成到现有 ELK/Loki 日志栈中，不影响原有日志采集和查询流程。推荐的集成架构为：
+        </p>
+        <div style="background: var(--slate-50); padding: 14px 18px; border-radius: 10px; font-family: 'Courier New', monospace; font-size: 0.82rem; color: var(--slate-700); line-height: 2;">
+          Filebeat / Fluent Bit → Elasticsearch / Loki<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;↓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+          &nbsp;&nbsp;Loglizer（异常检测）&nbsp;&nbsp;Drain3（模板挖掘）<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;↓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+          &nbsp;&nbsp;告警平台（Keep）&nbsp;&nbsp;Grafana / Kibana 可视化
+        </div>
+      </div>
+    </section>
+
+    <!-- 国内银行特殊考虑 -->
+    <section class="section" id="domestic">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, rgba(239,68,68,0.12) 0%, rgba(245,158,11,0.12) 100%);">🇨🇳</div>
+        <h2>国内银行特殊考虑</h2>
+        <span class="section-badge" style="background: rgba(239,68,68,0.1); color: var(--danger);">关键因素</span>
+      </div>
+      <div class="section-intro">
+        <p>国内银行在引入开源 AIOps 方案时，需特别关注<strong>国产化合规、中文支持、离线部署</strong>三大特殊需求。以下逐项分析并给出推荐项目清单。</p>
+      </div>
+
+      <div class="domestic-section">
+        <div class="domestic-item highlight-bg">
+          <h4>🏛️ 国产化合规</h4>
+          <p>根据《网络安全法》《数据安全法》《关键信息基础设施安全保护条例》要求，银行核心系统的软硬件需满足<strong>国产化替代</strong>需求。推荐优先选择已通过<strong>信创认证</strong>或可在国产操作系统（如麒麟、统信 UOS）和国产数据库（如达梦、OceanBase）上运行的开源项目。</p>
+          <p style="margin-top: 8px;">上述推荐方案中，<strong>夜莺、SkyWalking、Loglizer</strong> 已在国内信创环境中广泛验证；Coroot、SigNoz、Keep、HolmesGPT 等虽为海外项目，但均支持 Linux 原生部署，可在国产操作系统上运行。</p>
+        </div>
+
+        <div class="domestic-item">
+          <h4>🗣️ 中文支持</h4>
+          <p>对于运维团队以中文为主要工作语言的银行，建议优先考虑提供<strong>中文文档、中文社区、中文界面</strong>的项目。夜莺在这方面表现突出，拥有完善的中文学术文档和国内社区。SkyWalking 虽为 Apache 项目，但国内社区（如 SkyWalking 中文社区、吴晟的 B 站教程）非常活跃。</p>
+        </div>
+
+        <div class="domestic-item">
+          <h4>📦 离线部署</h4>
+          <p>银行内网通常与互联网物理隔离，要求所有组件支持<strong>离线安装和离线升级</strong>.。推荐的所有项目均支持通过 Docker 镜像离线包、二进制安装包等方式进行离线部署，不依赖在线安装。部署前建议提前下载所有依赖包和镜像。</p>
+        </div>
+      </div>
+
+      <div class="domestic-section">
+        <h3>✅ 推荐优先考虑的项目清单</h3>
+        <div class="domestic-recommend-list">
+          <div class="domestic-recommend-item">
+            <strong>🥇 夜莺 Nightingale</strong><br>
+            全中文、开箱即用、国内社区活跃，信创环境验证充分
+          </div>
+          <div class="domestic-recommend-item">
+            <strong>🥈 SkyWalking</strong><br>
+            Apache 顶级项目，Java 生态首选，国内开发者主导
+          </div>
+          <div class="domestic-recommend-item">
+            <strong>🥉 Keep</strong><br>
+            AI 告警关联能力突出，支持私有化部署和离线部署
+          </div>
+          <div class="domestic-recommend-item">
+            <strong>🏅 Coroot + SigNoz</strong><br>
+            eBPF 零侵入，适合大型银行复杂 IT 架构
+          </div>
+          <div class="domestic-recommend-item">
+            <strong>🏅 HolmesGPT</strong><br>
+            CNCF 沙箱，只读安全，AI 智能体首选
+          </div>
+          <div class="domestic-recommend-item">
+            <strong>🏅 Loglizer + Drain3</strong><br>
+            日志智能分析，兼容现有 ELK 栈
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 实施路线图 -->
+    <section class="section" id="roadmap">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, rgba(59,130,246,0.15) 0%, rgba(30,58,95,0.15) 100%);">🗺️</div>
+        <h2>实施路线图建议</h2>
+        <span class="section-badge" style="background: rgba(16,185,129,0.1); color: var(--success);">3-6 个月</span>
+      </div>
+      <div class="section-intro">
+        <p>AIOps 体系建设宜采取<strong>分阶段、循序渐进</strong>的策略，避免"一步到位"的风险。以下为推荐的三阶段实施路线图，总周期建议为 <strong>3–6 个月</strong>。</p>
+      </div>
+
+      <div class="roadmap-section">
+        <div class="roadmap-timeline">
+
+          <div class="roadmap-phase">
+            <div class="phase-header">
+              <div class="phase-number">1</div>
+              <div class="phase-title">基础观测建设</div>
+              <div class="phase-duration">1-2 个月</div>
+            </div>
+            <p class="phase-desc">
+              搭建可观测性基础设施，覆盖核心系统和关键业务系统。优先部署夜莺或 Coroot + SigNoz，实现指标、链路、日志的基础采集，建立统一的观测数据平台。
+            </p>
+            <div class="phase-deliverables">
+              <span class="deliverable-tag">✅ 观测平台部署</span>
+              <span class="deliverable-tag">✅ 核心系统接入</span>
+              <span class="deliverable-tag">✅ 基础看板搭建</span>
+              <span class="deliverable-tag">✅ 数据存储规划</span>
+            </div>
+          </div>
+
+          <div class="roadmap-phase">
+            <div class="phase-header">
+              <div class="phase-number">2</div>
+              <div class="phase-title">告警自动化</div>
+              <div class="phase-duration">2-4 个月</div>
+            </div>
+            <p class="phase-desc">
+              引入 Keep 或利用夜莺告警模块，建立分级告警体系。完成告警降噪、关联聚合、通知路由等核心能力建设，实现从"告警风暴"到"精准通知"的转变。
+            </p>
+            <div class="phase-deliverables">
+              <span class="deliverable-tag">✅ 告警规则梳理</span>
+              <span class="deliverable-tag">✅ 告警分级体系</span>
+              <span class="deliverable-tag">✅ 通知渠道集成</span>
+              <span class="deliverable-tag">✅ 告警闭环流程</span>
+            </div>
+          </div>
+
+          <div class="roadmap-phase">
+            <div class="phase-header">
+              <div class="phase-number">3</div>
+              <div class="phase-title">AI 智能体引入</div>
+              <div class="phase-duration">4-6 个月</div>
+            </div>
+            <p class="phase-desc">
+              部署 HolmesGPT 等 AI 智能体，在只读沙箱中开展自动化 RCA、智能故障排查等试点。选择 1-2 个核心场景进行验证，逐步扩展 AI 能力覆盖面。
+            </p>
+            <div class="phase-deliverables">
+              <span class="deliverable-tag">✅ AI 平台部署</span>
+              <span class="deliverable-tag">✅ 知识库构建</span>
+              <span class="deliverable-tag">✅ 试点场景验证</span>
+              <span class="deliverable-tag">✅ 效果评估报告</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- 风险提示 -->
+    <section class="section" id="risk">
+      <div class="section-header">
+        <div class="section-icon" style="background: linear-gradient(135deg, rgba(239,68,68,0.12) 0%, rgba(245,158,11,0.12) 100%);">⚠️</div>
+        <h2>风险提示</h2>
+        <span class="section-badge" style="background: rgba(239,68,68,0.1); color: var(--danger);">务必关注</span>
+      </div>
+      <div class="risk-section">
+        <h3>⚠️ 开源项目实施风险提示</h3>
+        <div class="risk-item">
+          <strong>1. 专职运维团队：</strong>开源方案虽无 license 费用，但需要一支具备 Linux、网络、数据库、容器化等综合能力的<strong>专业运维团队</strong>持续维护。建议至少配备 2-3 名专职工程师负责 AIOps 平台的日常运维。
+        </div>
+        <div class="risk-item">
+          <strong>2. 技术栈复杂度：</strong>多组件集成（如 Coroot + SigNoz + Keep + HolmesGPT）增加了技术栈复杂度，需要建立统一的<strong>技术选型规范</strong>和<strong>组件版本矩阵</strong>，避免版本不兼容风险。
+        </div>
+        <div class="risk-item">
+          <strong>3. 数据安全风险：</strong>观测数据中可能包含敏感业务信息（如交易流水、客户标识），需要在采集前进行<strong>脱敏处理</strong>，并确保数据传输和存储的加密合规。
+        </div>
+        <div class="risk-item">
+          <strong>4. 社区支持边界：</strong>开源项目的社区支持以"尽力而为"为原则，关键故障排查可能依赖自身团队。建议评估商业支持选项（如夜莺企业版、Soda 云服务）作为兜底方案。
+        </div>
+        <div class="risk-item">
+          <strong>5. AI 准确率预期：</strong>AI 智能体的根因分析和异常检测准确率受数据质量和训练周期影响较大，<strong>初期阶段可能存在误报和漏报</strong>，需要持续调优，不可盲目追求 100% 准确率。
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-links">
+      <a href="index.html">首页</a>
+      <a href="compare.html">项目对比</a>
+      <a href="recommendations.html">选型建议</a>
+      <a href="trends.html">趋势洞察</a>
+    </div>
+    <p class="footer-brand">银行 AI Ops 开源项目调研</p>
+    <p class="footer-meta">数据截至 2026年8月 | 本页面仅供参考，请以项目实际信息为准</p>
+  </div>
+</footer>
+
+<script>
+(function() {
+  const navLinks = document.querySelectorAll('.sidebar a.nav-link');
+  const sections = [];
+  navLinks.forEach(link => {
+    const href = link.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      const section = document.querySelector(href);
+      if (section) sections.push({ id: href.substring(1), link, section });
+    }
+  });
+
+  function updateActiveNav() {
+    const scrollPos = window.scrollY + 120;
+    let current = sections[0]?.id;
+    for (const { id, section } of sections) {
+      if (section.offsetTop <= scrollPos) current = id;
+    }
+    if (current) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const activeLink = document.querySelector('.sidebar a[href="#' + current + '"]');
+      if (activeLink) activeLink.classList.add('active');
+    }
+  }
+
+  window.addEventListener('scroll', updateActiveNav, { passive: true });
+  updateActiveNav();
+
+  window.addEventListener('hashchange', function() {
+    const hash = window.location.hash;
+    if (hash) {
+      const target = document.querySelector(hash);
+      if (target) {
+        setTimeout(() => {
+          window.scrollTo({ top: target.offsetTop - 20, behavior: 'smooth' });
+        }, 50);
+      }
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
