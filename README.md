@@ -167,28 +167,53 @@
 
 ## 🚀 快速开始
 
-### 环境要求
-
-- Python 3.x（用于启动本地 HTTP 服务器）或任意静态文件服务器
-
-### 本地运行
+### 模式一：纯静态模式（简单，仅查看）
 
 ```bash
 # 1. 克隆仓库
 git clone https://github.com/Mq-Tse/bank-aiops-survey.git
 cd bank-aiops-survey
 
-# 2. 启动本地 HTTP 服务器
+# 2. 启动本地 HTTP 服务器（任选其一）
 python -m http.server 8000
+# 或
+npx serve .
 
-# 3. 在浏览器中访问
+# 3. 在浏览器中访问（静态数据，无实时 Stars）
 # 首页:        http://localhost:8000/index.html
 # 对比表:      http://localhost:8000/compare.html
-# 选型建议:    http://localhost:8000/recommendations.html
-# 趋势洞察:    http://localhost:8000/trends.html
 ```
 
-> 💡 **提示**：由于浏览器对 `file://` 协议下的 `fetch()` 请求有限制，建议通过 HTTP 服务器访问。
+### 模式二：动态模式（推荐，实时 Stars）⭐
+
+```bash
+# 1. 安装依赖
+npm install
+
+# 2. 启动后端服务（同时提供静态文件和 API）
+node server.js
+
+# 3. 在浏览器中访问
+# 首页:        http://localhost:3000/index.html
+# 对比表:      http://localhost:3000/compare.html
+# API 状态:    http://localhost:3000/api/health
+```
+
+### （可选）配置 GitHub Token 提高 Rate Limit
+
+```bash
+# 1. 复制环境变量模板
+cp .env.example .env
+
+# 2. 编辑 .env 文件，填入你的 GitHub Token
+#    获取方式: https://github.com/settings/tokens
+#    需要权限: public_repo
+
+# 3. 重启服务
+node server.js
+```
+
+> 💡 **提示**：动态模式会自动从 GitHub API 获取实时 Stars 数据，默认缓存 10 分钟。
 
 ---
 
@@ -200,6 +225,11 @@ bank-aiops-survey/
 ├── compare.html                  # 多维度对比表
 ├── recommendations.html          # 选型建议
 ├── trends.html                   # 技术趋势洞察
+├── server.js                     # 后端 API 代理服务（支持动态数据）
+├── package.json                  # Node.js 依赖配置
+├── .env.example                  # 环境变量模板（GitHub Token）
+├── js/
+│   └── dynamic-data.js           # 动态数据加载模块
 ├── data/
 │   └── bank-aiops-projects.json  # 14 个项目结构化数据源
 ├── .gitignore
@@ -234,17 +264,27 @@ bank-aiops-survey/
 ## 🛠️ 技术栈
 
 - **前端**：原生 HTML5 + CSS3 + JavaScript（零依赖，自包含单文件）
-- **数据**：JSON 结构化数据源
+- **后端**：Node.js + Express（API 代理，支持动态数据）
+- **数据**：JSON 结构化数据源 + GitHub REST API 动态获取
 - **字体**：PingFang SC / Hiragino Sans GB / Microsoft YaHei
 - **设计**：响应式布局，专业银行蓝/石板灰配色方案
+
+### 数据模式
+
+| 模式 | 说明 | 优点 |
+|------|------|------|
+| **静态模式** | 使用 JSON 文件中的固定数据 | 快速、稳定、可离线 |
+| **动态模式** | 通过 GitHub API 实时获取 Stars 等数据 | 数据新鲜、自动更新 |
+| **混合模式** ⭐ | 核心数据用 JSON，Stars 动态获取 | 平衡体验和实时性 |
 
 ---
 
 ## 📊 数据说明
 
-- **数据采集时点**：2026 年 8 月
-- **数据来源**：GitHub 公开信息（API、README、文档）
-- **Stars 数**：调研时点的近似值，实际数据请以 GitHub 为准
+- **静态数据采集时点**：2026 年 8 月
+- **动态数据来源**：GitHub REST API（实时获取 Stars、Forks 等）
+- **缓存策略**：动态数据默认缓存 10 分钟
+- **Rate Limit**：未认证 60 次/小时，配置 Token 后 5000 次/小时
 - **成熟度评分**：基于社区活跃度、版本稳定性、文档完善度综合评估（1-5 分）
 
 ---
@@ -261,10 +301,11 @@ bank-aiops-survey/
 
 ## ⚠️ 免责声明
 
-- 本平台数据为调研时点快照，不保证实时性
+- 本平台静态数据为调研时点快照，动态数据实时从 GitHub API 获取
 - 选型建议仅供参考，实际决策需结合具体业务场景
 - 开源项目的生产使用需进行充分的安全评估和合规审查
 - 项目成熟度评分为主观评估，仅供参考
+- 动态模式依赖 GitHub API，如遇限流请配置 Token 或等待缓存过期
 
 ---
 

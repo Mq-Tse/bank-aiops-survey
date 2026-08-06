@@ -861,8 +861,62 @@ table.compare-table {
       state.selectedIds = new Set(defaultSelected);
       renderCheckboxes();
       renderTable();
+      
+      // 加载动态数据
+      await loadDynamicStars();
     } catch (err) {
       showError(err.message);
+    }
+  }
+
+  async function loadDynamicStars() {
+    try {
+      const repos = state.projects
+        .map(p => {
+          const match = p.url.match(/github\.com\/([^\/]+\/[^\/]+)/);
+          return match ? match[1] : null;
+        })
+        .filter(Boolean);
+
+      if (repos.length === 0) return;
+
+      const response = await fetch('/api/stars', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ repos })
+      });
+
+      if (!response.ok) throw new Error(`API 不可用`);
+
+      const result = await response.json();
+      
+      // 更新 Stars 数据
+      let updatedCount = 0;
+      state.projects.forEach(p => {
+        const match = p.url.match(/github\.com\/([^\/]+\/[^\/]+)/);
+        const repoName = match ? match[1] : null;
+        if (repoName && result.results[repoName]?.stars) {
+          const newStars = result.results[repoName].stars;
+          if (Number(newStars) !== Number(p.stars)) {
+            p.stars = newStars;
+            updatedCount++;
+          }
+        }
+      });
+
+      if (updatedCount > 0) {
+        renderCheckboxes();
+        renderTable();
+
+        // 显示更新徽章
+        const badge = document.createElement('div');
+        badge.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#10b981;color:white;padding:12px 24px;border-radius:12px;box-shadow:0 8px 24px rgba(16,185,129,0.3);z-index:9999;';
+        badge.innerHTML = `✨ 已更新 ${updatedCount} 个项目的实时 Stars · ${new Date(result.fetchedAt).toLocaleTimeString('zh-CN')}`;
+        document.body.appendChild(badge);
+        setTimeout(() => { badge.style.opacity = '0'; badge.style.transition = 'opacity 0.3s'; setTimeout(() => badge.remove(), 300); }, 4000);
+      }
+    } catch (err) {
+      console.info('Dynamic data unavailable:', err.message);
     }
   }
 
@@ -1148,6 +1202,9 @@ table.compare-table {
   document.addEventListener('DOMContentLoaded', init);
 })();
 </script>
+
+<!-- 动态数据加载模块 -->
+<script src="js/dynamic-data.js"></script>
 
 </body>
 </html>
