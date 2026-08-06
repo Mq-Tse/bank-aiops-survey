@@ -197,6 +197,7 @@ node server.js
 # 首页:        http://localhost:3000/index.html
 # 对比表:      http://localhost:3000/compare.html
 # API 状态:    http://localhost:3000/api/health
+# 同步状态:    http://localhost:3000/api/sync-status
 ```
 
 ### （可选）配置 GitHub Token 提高 Rate Limit
@@ -213,7 +214,67 @@ cp .env.example .env
 node server.js
 ```
 
-> 💡 **提示**：动态模式会自动从 GitHub API 获取实时 Stars 数据，默认缓存 10 分钟。
+> 💡 **提示**：动态模式具有以下特性：
+> - 启动时自动执行首次全量同步
+> - **每 1 小时自动刷新**所有项目的 Stars 数据
+> - 默认缓存 10 分钟，避免重复请求
+> - 智能限流检测，配额不足时自动跳过
+
+---
+
+## 🔌 API 文档
+
+### 动态数据接口
+
+| 端点 | 方法 | 说明 |
+|------|------|------|
+| `/api/stars` | POST | 批量获取项目 Stars（请求体: `{ repos: [...] }`） |
+| `/api/health` | GET | 服务健康状态和限流信息 |
+| `/api/cache` | GET | 缓存详情 |
+
+### 定时同步接口
+
+| 端点 | 方法 | 说明 |
+|------|------|------|
+| `/api/sync` | POST | **手动触发全量同步**（后台执行） |
+| `/api/sync-status` | GET | **查看同步状态**（最后同步时间、下次同步时间、成功/失败数） |
+
+### 使用示例
+
+```bash
+# 触发手动同步
+curl -X POST http://localhost:3000/api/sync
+
+# 查看同步状态
+curl http://localhost:3000/api/sync-status
+# 返回:
+# {
+#   "lastSync": "2026-08-06T06:30:00.000Z",
+#   "nextSync": "2026-08-06T07:30:00.000Z",
+#   "syncing": false,
+#   "totalRepos": 14,
+#   "successCount": 13,
+#   "failCount": 1,
+#   "autoSyncInterval": 60
+# }
+
+# 批量获取 Stars
+curl -X POST http://localhost:3000/api/stars \
+  -H "Content-Type: application/json" \
+  -d '{"repos": ["keephq/keep", "ccfos/nightingale"]}'
+
+# 查看限流状态
+curl http://localhost:3000/api/health
+# 返回:
+# {
+#   "rateLimit": {
+#     "remaining": 45,
+#     "resetAt": "2026-08-06T07:05:32.000Z",
+#     "resetInMinutes": 38,
+#     "limited": false
+#   }
+# }
+```
 
 ---
 
@@ -284,8 +345,25 @@ bank-aiops-survey/
 - **静态数据采集时点**：2026 年 8 月
 - **动态数据来源**：GitHub REST API（实时获取 Stars、Forks 等）
 - **缓存策略**：动态数据默认缓存 10 分钟
+- **自动同步**：每 1 小时自动全量刷新所有项目数据
+- **同步机制**：启动时首次同步 → 每小时定时同步 → 智能限流保护
 - **Rate Limit**：未认证 60 次/小时，配置 Token 后 5000 次/小时
 - **成熟度评分**：基于社区活跃度、版本稳定性、文档完善度综合评估（1-5 分）
+
+### 同步流程
+
+```
+服务启动
+    ↓
+立即执行首次全量同步（14 个项目，并发 5 个/批）
+    ↓
+设置定时任务（每 1 小时触发）
+    ↓
+检查限流 → 配额充足 → 执行同步
+         → 配额不足 → 跳过本次，等待下次
+    ↓
+更新缓存 → 前端获取最新数据
+```
 
 ---
 
