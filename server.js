@@ -15,6 +15,13 @@ const CACHE_TTL = 10 * 60 * 1000; // 10 分钟缓存
 const AUTO_SYNC_INTERVAL = 60 * 60 * 1000; // 1 小时自动同步
 let starsCache = {};
 
+// GitHub API 限流状态
+let rateLimitInfo = {
+  remaining: 60,
+  resetAt: 0,
+  limited: false
+};
+
 // 同步状态
 let syncStatus = {
   lastSync: null,
@@ -56,8 +63,18 @@ async function fetchRepoStars(repoFullName) {
   try {
     const response = await fetch(url, { headers });
 
-    if (response.status === 429) {
-      console.warn(`Rate limit exceeded for ${repoFullName}`);
+    // 更新限流信息
+    const remaining = parseInt(response.headers.get('x-ratelimit-remaining') || '60');
+    const resetTimestamp = parseInt(response.headers.get('x-ratelimit-reset') || '0');
+    rateLimitInfo.remaining = remaining;
+    rateLimitInfo.resetAt = resetTimestamp * 1000;
+    rateLimitInfo.limited = remaining === 0;
+
+    if (response.status === 429 || response.status === 403) {
+      const waitTime = rateLimitInfo.resetAt > 0 
+        ? Math.ceil((rateLimitInfo.resetAt - Date.now()) / 60000)
+        : 'unknown';
+      console.warn(`Rate limit exceeded for ${repoFullName}. Reset in ~${waitTime} minutes (remaining: ${remaining})`);
       return null;
     }
 
@@ -144,10 +161,22 @@ app.post('/api/stars', async (req, res) => {
  * GET /api/health - 健康检查
  */
 app.get('/api/health', (req, res) => {
+  const now = Date.now();
+  const resetMinutes = rateLimitInfo.resetAt > now
+    ? Math.ceil((rateLimitInfo.resetAt - now) / 60000)
+    : 0;
+
   res.json({
     status: 'ok',
     cacheSize: Object.keys(starsCache).length,
     authenticated: !!GITHUB_TOKEN,
+    rateLimit: {
+      remaining: rateLimitInfo.remaining,
+      resetAt: rateLimitInfo.resetAt > 0 ? new Date(rateLimitInfo.resetAt).toISOString() : null,
+      resetInMinutes: resetMinutes,
+      limited: rateLimitInfo.limited
+    },
+    nextSync: syncStatus.nextSync,
     timestamp: new Date().toISOString()
   });
 });
@@ -236,8 +265,21 @@ async function syncAllRepos() {
     return;
   }
 
+  // 检查是否被限流
+  if (rateLimitInfo.limited || rateLimitInfo.remaining <= 10) {
+    const waitTime = rateLimitInfo.resetAt > 0
+      ? Math.ceil((rateLimitInfo.resetAt - Date.now()) / 60000)
+      : 60;
+    console.log(`⏸️ Rate limited. Skipping sync. Reset in ~${waitTime} minutes (remaining: ${rateLimitInfo.remaining})`);
+    
+    // 如果被限流，调整下次同步时间到限流重置后
+    syncStatus.nextSync = new Date(Date.now() + Math.max(waitTime * 60000, AUTO_SYNC_INTERVAL)).toISOString();
+    return;
+  }
+
   syncStatus.syncing = true;
   console.log(`\n🔄 [${new Date().toLocaleString('zh-CN')}] Starting full sync...`);
+  console.log(`📊 Rate limit remaining: ${rateLimitInfo.remaining}`);
 
   try {
     const repos = getAllRepos();
@@ -250,6 +292,12 @@ async function syncAllRepos() {
     // 并发控制：每次最多请求 5 个
     const CONCURRENCY = 5;
     for (let i = 0; i < repos.length; i += CONCURRENCY) {
+      // 检查限流
+      if (rateLimitInfo.limited || rateLimitInfo.remaining <= 5) {
+        console.log(`⏸️ Rate limit low (${rateLimitInfo.remaining} remaining), pausing sync...`);
+        break;
+      }
+
       const batch = repos.slice(i, i + CONCURRENCY);
       const results = await Promise.allSettled(
         batch.map(repo => fetchAndCacheRepo(repo))
@@ -265,7 +313,7 @@ async function syncAllRepos() {
 
       // 批次间隔，避免触发限流
       if (i + CONCURRENCY < repos.length) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 1500));
       }
     }
 
